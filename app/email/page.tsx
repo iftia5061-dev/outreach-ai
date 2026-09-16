@@ -5,6 +5,14 @@ import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
 
+// Message অবজেক্টের টাইপ ডিফাইন করা হলো
+interface Message {
+  id: number;
+  sender: string;
+  text: string;
+  time: string;
+}
+
 export default function EmailPage() {
   const [loading, setLoading] = useState(true);
   const [selectedEmail, setSelectedEmail] = useState<any>(null);
@@ -132,7 +140,7 @@ export default function EmailPage() {
           </div>
           
           <div className="p-4 space-y-4 max-h-96 overflow-y-auto">
-            {selectedEmail.messages.map((msg) => (
+            {selectedEmail.messages.map((msg: Message) => (
               <div key={msg.id} className={`flex ${msg.sender === 'ai' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`${msg.sender === 'ai' ? 'bg-gray-700' : 'bg-blue-600'} text-white rounded-lg px-4 py-2 max-w-md`}>
                   <p className="text-sm">{msg.text}</p>

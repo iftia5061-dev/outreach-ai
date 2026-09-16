@@ -5,13 +5,30 @@ import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
 
+type Message = {
+  id: number;
+  sender: 'prospect' | 'ai';
+  text: string;
+  time: string;
+};
+
+type Conversation = {
+  id: number;
+  name: string;
+  phone: string;
+  lastMessage: string;
+  time: string;
+  unread: boolean;
+  messages: Message[];
+};
+
 export default function WhatsAppPage() {
   const [loading, setLoading] = useState(true);
-  const [selectedConversation, setSelectedConversation] = useState<any>(null);
+  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [newMessage, setNewMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
-  const [conversations, setConversations] = useState([
+  const [conversations, setConversations] = useState<Conversation[]>([
     { 
       id: 1, 
       name: "Capt. Marco Bellini", 
@@ -56,22 +73,27 @@ export default function WhatsAppPage() {
 
   const handleSendMessage = () => {
     if (newMessage.trim() && selectedConversation) {
-      const updatedConversations = conversations.map(c =>
+      const aiMessage: Message = {
+        id: selectedConversation.messages.length + 1,
+        sender: 'ai',
+        text: newMessage,
+        time: new Date().toLocaleTimeString()
+      };
+
+      const updatedConversations: Conversation[] = conversations.map(c =>
         c.id === selectedConversation.id
           ? {
               ...c,
-              messages: [
-                ...c.messages,
-                { id: c.messages.length + 1, sender: 'ai', text: newMessage, time: new Date().toLocaleTimeString() }
-              ],
+              messages: [...c.messages, aiMessage],
               lastMessage: newMessage,
               time: 'Just now',
               unread: false
             }
           : c
       );
+
       setConversations(updatedConversations);
-      setSelectedConversation(updatedConversations.find(c => c.id === selectedConversation.id)!);
+      setSelectedConversation(updatedConversations.find(c => c.id === selectedConversation.id) ?? null);
       setNewMessage('');
       setToast({ message: 'Message sent successfully', type: 'success' });
     }
