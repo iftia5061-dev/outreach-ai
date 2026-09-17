@@ -64,7 +64,16 @@ export default function AIInboxPage() {
   };
 
   return (
-    <div className="flex">
+    <div className="flex flex-col min-h-screen bg-gray-950">
+      <div className="p-4 border-b border-gray-700">
+        <button
+          onClick={() => window.history.back()}
+          className="flex items-center gap-2 text-sm text-gray-400 hover:text-white"
+        >
+          ← Back
+        </button>
+      </div>
+      <div className="flex flex-1">
 
       {/* Left Panel - Conversation List */}
       <div className="w-80 border-r border-gray-700 bg-gray-800 flex flex-col">
@@ -185,5 +194,6 @@ export default function AIInboxPage() {
           )}
         </div>
       </div>
+    </div>
   );
 }

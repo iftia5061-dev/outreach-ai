@@ -36,7 +36,7 @@ export default function LeadsPage() {
 
   if (loading) {
     return (
-      <div className="p-6">
+      <div className="min-h-screen bg-gray-950 p-6">
         <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
           <LoadingSkeleton />
         </div>
@@ -45,7 +45,13 @@ export default function LeadsPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="min-h-screen bg-gray-950 p-6">
+      <button
+        onClick={() => window.history.back()}
+        className="flex items-center gap-2 text-sm text-gray-400 hover:text-white mb-4"
+      >
+        ← Back
+      </button>
       <h2 className="text-base font-semibold text-white mb-6">Qualified Leads</h2>
       
       <div className="mb-4 flex gap-2 flex-wrap">

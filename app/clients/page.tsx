@@ -37,7 +37,7 @@ export default function ClientsPage() {
 
   if (loading) {
     return (
-      <div className="p-6">
+      <div className="min-h-screen bg-gray-950 p-6">
         <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
           <LoadingSkeleton />
         </div>
@@ -46,7 +46,13 @@ export default function ClientsPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="min-h-screen bg-gray-950 p-6">
+      <button
+        onClick={() => window.history.back()}
+        className="flex items-center gap-2 text-sm text-gray-400 hover:text-white mb-4"
+      >
+        ← Back
+      </button>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-base font-semibold text-white">Client Management</h2>
         <Button 
