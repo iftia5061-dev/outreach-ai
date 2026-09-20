@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { loginUser, registerUser } from '@/lib/api';
 
 const typingTexts = [
   "AI contacts every yacht manager automatically...",
@@ -215,7 +216,16 @@ export default function LoginPage() {
                   style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
               </div>
 
-              <button onClick={() => router.push('/dashboard')} style={{
+              <button onClick={async () => {
+                if (!email || !password) { alert('Enter email and password'); return; }
+                const res = await loginUser(email, password);
+                if (res.token) {
+                  localStorage.setItem('token', res.token);
+                  router.push('/dashboard');
+                } else {
+                  alert(res.message || 'Login failed');
+                }
+              }} style={{
                 width: '100%', padding: '12px', borderRadius: '10px',
                 background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
                 color: '#fff', fontSize: '14px', fontWeight: 600, border: 'none', cursor: 'pointer',
@@ -292,7 +302,16 @@ export default function LoginPage() {
                   style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
               </div>
 
-              <button onClick={() => router.push('/dashboard')} style={{
+              <button onClick={async () => {
+                if (!name || !email || !password) { alert('Fill all fields'); return; }
+                const res = await registerUser(name, email, password);
+                if (res.token) {
+                  localStorage.setItem('token', res.token);
+                  router.push('/dashboard');
+                } else {
+                  alert(res.message || 'Registration failed');
+                }
+              }} style={{
                 width: '100%', padding: '12px', borderRadius: '10px',
                 background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
                 color: '#fff', fontSize: '14px', fontWeight: 600, border: 'none', cursor: 'pointer',

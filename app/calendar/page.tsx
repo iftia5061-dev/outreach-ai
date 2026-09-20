@@ -71,7 +71,9 @@ export default function CalendarPage() {
       </button>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-base font-semibold text-white">Calendar</h2>
-        <Button variant="primary">+ Schedule Meeting</Button>
+        <Button variant="primary" onClick={() => setShowBookingForm(!showBookingForm)}>
+          {showBookingForm ? 'Cancel' : '+ Schedule Meeting'}
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-6">

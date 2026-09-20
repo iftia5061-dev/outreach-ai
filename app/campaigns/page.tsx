@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { mockCampaigns } from '@/lib/mockData';
+import { getCampaigns, createCampaign } from '@/lib/api';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
 
 export default function CampaignsPage() {
-  const [campaigns, setCampaigns] = useState(mockCampaigns);
+  const [campaigns, setCampaigns] = useState<any[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [newCampaign, setNewCampaign] = useState({
@@ -19,10 +19,15 @@ export default function CampaignsPage() {
   });
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 500);
+    const fetchCampaigns = async () => {
+      const data = await getCampaigns();
+      setCampaigns(data);
+      setLoading(false);
+    };
+    fetchCampaigns();
   }, []);
 
-  const handleCreateCampaign = () => {
+  const handleCreateCampaign = async () => {
     if (!newCampaign.name.trim()) {
       setToast({ message: 'Campaign name is required', type: 'error' });
       return;
@@ -35,18 +40,14 @@ export default function CampaignsPage() {
       setToast({ message: 'Message template is required', type: 'error' });
       return;
     }
-    
-    const campaign = {
-      id: campaigns.length + 1,
+
+    const campaign = await createCampaign({
       name: newCampaign.name,
       audience: newCampaign.audience,
       channel: newCampaign.channel,
       status: 'Active',
-      sent: 0,
-      open: 0,
-      reply: 0,
-      conversion: '0%',
-    };
+      message: newCampaign.message,
+    });
     setCampaigns([...campaigns, campaign]);
     setShowCreateForm(false);
     setNewCampaign({ name: '', audience: '', channel: 'Email', message: '' });
@@ -95,7 +96,9 @@ export default function CampaignsPage() {
       </button>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-base font-semibold text-white">Campaigns</h2>
-        <Button variant="primary">+ Create Campaign</Button>
+        <Button variant="primary" onClick={() => setShowCreateForm(!showCreateForm)}>
+          {showCreateForm ? 'Cancel' : '+ Create Campaign'}
+        </Button>
       </div>
 
         {/* Campaign Stats */}
@@ -167,7 +170,7 @@ export default function CampaignsPage() {
         </div>
 
         {/* Create Campaign Form */}
-        <div className="mt-6 bg-gray-800 border border-gray-700 rounded-xl p-4">
+        {showCreateForm && <div className="mt-6 bg-gray-800 border border-gray-700 rounded-xl p-4">
           <p className="text-sm font-medium text-white mb-4">Create New Campaign</p>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -231,7 +234,7 @@ export default function CampaignsPage() {
             </Button>
             <Button variant="outline">Save as Draft</Button>
           </div>
-        </div>
+        </div>}
       
       {toast && (
         <Toast 

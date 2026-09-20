@@ -77,6 +77,7 @@ export default function TelephoneAIPage() {
               <label className="text-xs text-gray-400 mb-1 block">Twilio Account SID</label>
               <input
                 type="text"
+                autoComplete="off"
                 placeholder="Enter Twilio Account SID"
                 value={aiConfig.accountSid}
                 onChange={(e) => setAiConfig({...aiConfig, accountSid: e.target.value})}

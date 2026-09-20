@@ -126,7 +126,7 @@ export default function ClientsPage() {
                 <td className="px-4 py-3 text-gray-400">{c.prospects}</td>
                 <td className="px-4 py-3 text-gray-400">{c.leads}</td>
                 <td className="px-4 py-3">
-                  <Button variant="outline" size="sm">View Details</Button>
+                  <Button variant="outline" size="sm" onClick={() => setToast({ message: `Viewing ${c.name} details`, type: 'info' })}>View Details</Button>
                 </td>
               </tr>
             ))}

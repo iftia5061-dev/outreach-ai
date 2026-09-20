@@ -2,20 +2,25 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { mockProspects } from '@/lib/mockData';
+import { getProspects, createProspect, deleteProspect, updateProspect } from '@/lib/api';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
 
 export default function ProspectsPage() {
-  const [prospects, setProspects] = useState(mockProspects);
+  const [prospects, setProspects] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [interestFilter, setInterestFilter] = useState('All Interest');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 500);
+    const fetchProspects = async () => {
+      const data = await getProspects();
+      setProspects(data);
+      setLoading(false);
+    };
+    fetchProspects();
   }, []);
 
   const filteredProspects = prospects.filter(p => {
@@ -28,8 +33,15 @@ export default function ProspectsPage() {
   });
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newProspect, setNewProspect] = useState({
+    name: '', position: '', company: '', yacht: '',
+    email: '', phone: '', whatsapp: '', linkedin: '',
+    country: '', status: 'New', interest: 'Medium',
+  });
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
+    await deleteProspect(id);
     setProspects(prospects.filter(p => p.id !== id));
     setToast({ message: 'Prospect deleted successfully', type: 'success' });
   };
@@ -70,8 +82,80 @@ export default function ProspectsPage() {
       </button>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-base font-semibold text-white">Prospects</h2>
-        <Button variant="primary">+ Add prospect</Button>
+        <div className="flex gap-2">
+          <label className="cursor-pointer bg-gray-700 text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-600">
+            📁 Import CSV
+            <input
+              type="file"
+              accept=".csv"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const text = await file.text();
+                const lines = text.split('\n').filter(l => l.trim());
+                const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+                let added = 0;
+                for (let i = 1; i < lines.length; i++) {
+                  const values = lines[i].split(',').map(v => v.trim());
+                  const prospect: any = {};
+                  headers.forEach((h, idx) => { prospect[h] = values[idx] || ''; });
+                  if (prospect.name) {
+                    const result = await createProspect({ ...prospect, status: 'New', interest: 'Medium' });
+                    setProspects(prev => [...prev, result]);
+                    added++;
+                  }
+                }
+                setToast({ message: `${added} prospects imported!`, type: 'success' });
+              }}
+            />
+          </label>
+          <Button variant="primary" onClick={() => setShowAddForm(!showAddForm)}>
+            {showAddForm ? 'Cancel' : '+ Add prospect'}
+          </Button>
+        </div>
       </div>
+
+      {showAddForm && (
+        <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 mb-4">
+          <p className="text-sm font-medium text-white mb-4">Add New Prospect</p>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { key: 'name', label: 'Name', placeholder: 'Capt. Marco Bellini' },
+              { key: 'position', label: 'Position', placeholder: 'Captain' },
+              { key: 'company', label: 'Company', placeholder: 'MV Serenity' },
+              { key: 'yacht', label: 'Yacht', placeholder: 'MV Serenity' },
+              { key: 'email', label: 'Email', placeholder: 'email@example.com' },
+              { key: 'phone', label: 'Phone', placeholder: '+39 123 456 7890' },
+              { key: 'whatsapp', label: 'WhatsApp', placeholder: '+39 123 456 7890' },
+              { key: 'country', label: 'Country', placeholder: 'Italy' },
+            ].map((field) => (
+              <div key={field.key}>
+                <label className="text-xs text-gray-400 mb-1 block">{field.label}</label>
+                <input
+                  type="text"
+                  placeholder={field.placeholder}
+                  value={(newProspect as any)[field.key]}
+                  onChange={(e) => setNewProspect({...newProspect, [field.key]: e.target.value})}
+                  className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 outline-none"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 flex gap-2">
+            <Button variant="primary" onClick={async () => {
+              if (!newProspect.name) { setToast({ message: 'Name is required', type: 'error' }); return; }
+              const result = await createProspect(newProspect);
+              setProspects([...prospects, result]);
+              setShowAddForm(false);
+              setNewProspect({ name: '', position: '', company: '', yacht: '', email: '', phone: '', whatsapp: '', linkedin: '', country: '', status: 'New', interest: 'Medium' });
+              setToast({ message: 'Prospect added!', type: 'success' });
+            }}>
+              Save Prospect
+            </Button>
+          </div>
+        </div>
+      )}
 
         {/* Search and Filter */}
         <div className="flex gap-3 mb-4">

@@ -2,20 +2,35 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { mockConversations } from '@/lib/mockData';
+import { getProspects } from '@/lib/api';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
 
 export default function AIInboxPage() {
-  const [conversations, setConversations] = useState(mockConversations);
-  const [selectedConversation, setSelectedConversation] = useState(mockConversations[0]);
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 500);
+    const fetchConversations = async () => {
+      const prospects = await getProspects();
+      const convs = prospects.map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        company: p.company,
+        status: p.status,
+        lastMessage: `Last contact: ${p.last_contact || 'Not yet contacted'}`,
+        time: p.last_contact || 'New',
+        unread: p.status === 'Responded',
+        messages: [],
+      }));
+      setConversations(convs);
+      setLoading(false);
+    };
+    fetchConversations();
   }, []);
 
   const filteredConversations = conversations.filter(c =>
@@ -91,7 +106,7 @@ export default function AIInboxPage() {
               <div 
                 key={c.id} 
                 onClick={() => setSelectedConversation(c)}
-                className={`flex items-center gap-3 px-4 py-3 border-b border-gray-700 hover:bg-gray-700 cursor-pointer ${selectedConversation.id === c.id ? 'bg-gray-700' : ''}`}
+                className={`flex items-center gap-3 px-4 py-3 border-b border-gray-700 hover:bg-gray-700 cursor-pointer ${selectedConversation?.id === c.id ? 'bg-gray-700' : ''}`}
               >
                 <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-gray-300 font-medium text-sm flex-shrink-0">
                   {c.name.charAt(0)}
@@ -114,20 +129,55 @@ export default function AIInboxPage() {
           {/* Header */}
           <div className="p-4 border-b border-gray-700 bg-gray-800 flex justify-between items-center">
             <div>
-              <h3 className="text-sm font-semibold text-white">{selectedConversation.name}</h3>
-              <p className="text-xs text-gray-400">{selectedConversation.company}</p>
+              <h3 className="text-sm font-semibold text-white">{selectedConversation?.name || 'Select a conversation'}</h3>
+              <p className="text-xs text-gray-400">{selectedConversation?.company || ''}</p>
             </div>
             <div className="flex gap-2">
-              <button className="text-xs px-3 py-1 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700">Mark as Interested</button>
-              <button className="text-xs px-3 py-1 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700">Mark as Qualified</button>
-              <button className="text-xs px-3 py-1 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700">Schedule Meeting</button>
+              <button
+                onClick={async () => {
+                  if (!selectedConversation) { return; }
+                  await fetch(`http://localhost:5000/api/prospects/${selectedConversation.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'Interested', interest: 'High', notes: '', next_followup: '' }),
+                  });
+                  setToast({ message: `${selectedConversation.name} marked as Interested!`, type: 'success' });
+                }}
+                className="text-xs px-3 py-1 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700"
+              >
+                Mark as Interested
+              </button>
+              <button
+                onClick={async () => {
+                  if (!selectedConversation) { return; }
+                  await fetch(`http://localhost:5000/api/prospects/${selectedConversation.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'Qualified', interest: 'Very High', notes: '', next_followup: '' }),
+                  });
+                  setToast({ message: `${selectedConversation.name} marked as Qualified!`, type: 'success' });
+                }}
+                className="text-xs px-3 py-1 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700"
+              >
+                Mark as Qualified
+              </button>
+              <button
+                onClick={() => {
+                  if (!selectedConversation) { return; }
+                  window.open(`http://localhost:5000/api/booking/create-link?prospect_name=${selectedConversation.name}&prospect_email=${selectedConversation.email || ''}`, '_blank');
+                  setToast({ message: 'Meeting booking link opened!', type: 'info' });
+                }}
+                className="text-xs px-3 py-1 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700"
+              >
+                Schedule Meeting
+              </button>
             </div>
           </div>
 
           {/* Messages */}
           <div className="flex-1 p-4 overflow-y-auto bg-gray-800">
             <div className="space-y-4">
-              {selectedConversation.messages.map((msg) => (
+              {selectedConversation?.messages?.map((msg: any) => (
                 <div key={msg.id} className={`flex ${msg.sender === 'ai' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`${msg.sender === 'ai' ? 'bg-gray-700' : 'bg-blue-600'} text-white rounded-lg px-4 py-2 max-w-md`}>
                     <p className="text-sm">{msg.text}</p>

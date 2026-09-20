@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Button from '@/components/Button';
+import { getMeetings } from '@/lib/api';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
 
@@ -9,15 +10,15 @@ export default function MeetingsPage() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('All');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
-  const [meetings, setMeetings] = useState([
-    { id: 1, name: "James Whitfield", company: "Yacht Mgr", date: "Sep 18, 2026", time: "10:00 AM", status: "Upcoming" },
-    { id: 2, name: "Capt. Marco Bellini", company: "MV Serenity", date: "Sep 19, 2026", time: "2:00 PM", status: "Upcoming" },
-    { id: 3, name: "Sophie Laurent", company: "Shipyard Mgr", date: "Sep 20, 2026", time: "11:00 AM", status: "Completed" },
-    { id: 4, name: "Eng. Nikos P.", company: "Azure Services", date: "Sep 15, 2026", time: "3:00 PM", status: "Cancelled" },
-  ]);
+  const [meetings, setMeetings] = useState<any[]>([]);
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 500);
+    const fetchMeetings = async () => {
+      const data = await getMeetings();
+      setMeetings(data);
+      setLoading(false);
+    };
+    fetchMeetings();
   }, []);
 
   const handleReschedule = (id: number) => {

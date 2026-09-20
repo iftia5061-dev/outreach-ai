@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Button from '@/components/Button';
+import { getLeads } from '@/lib/api';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
 
@@ -11,14 +12,15 @@ export default function LeadsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
-  const [leads, setLeads] = useState([
-    { id: 1, name: "James Whitfield", company: "Yacht Mgr", source: "AI Inbox", date: "Sep 15, 2026", value: "€50,000", status: "Talking", email: "james@yachtmgr.com", phone: "+30 987 654 3210" },
-    { id: 2, name: "Capt. Marco Bellini", company: "MV Serenity", source: "Campaign", date: "Sep 14, 2026", value: "€75,000", status: "Qualified", email: "capt.marco@mvserenity.com", phone: "+39 123 456 7890" },
-    { id: 3, name: "Sophie Laurent", company: "Shipyard Mgr", source: "LinkedIn", date: "Sep 13, 2026", value: "€100,000", status: "New", email: "sophie@shipyard.com", phone: "+356 555 123 4567" },
-  ]);
+  const [leads, setLeads] = useState<any[]>([]);
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 500);
+    const fetchLeads = async () => {
+      const data = await getLeads();
+      setLeads(data);
+      setLoading(false);
+    };
+    fetchLeads();
   }, []);
 
   const filteredLeads = leads.filter(lead => {
