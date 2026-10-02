@@ -136,7 +136,7 @@ export default function AIInboxPage() {
               <button
                 onClick={async () => {
                   if (!selectedConversation) { return; }
-                  await fetch(`http://localhost:5000/api/prospects/${selectedConversation.id}`, {
+                                    await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/prospects/${selectedConversation.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status: 'Interested', interest: 'High', notes: '', next_followup: '' }),
@@ -150,7 +150,7 @@ export default function AIInboxPage() {
               <button
                 onClick={async () => {
                   if (!selectedConversation) { return; }
-                  await fetch(`http://localhost:5000/api/prospects/${selectedConversation.id}`, {
+                  await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/prospects/${selectedConversation.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status: 'Qualified', interest: 'Very High', notes: '', next_followup: '' }),
@@ -164,7 +164,7 @@ export default function AIInboxPage() {
               <button
                 onClick={() => {
                   if (!selectedConversation) { return; }
-                  window.open(`http://localhost:5000/api/booking/create-link?prospect_name=${selectedConversation.name}&prospect_email=${selectedConversation.email || ''}`, '_blank');
+                  window.open(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/booking/create-link?prospect_name=${selectedConversation.name}&prospect_email=${selectedConversation.email || ''}`, '_blank');
                   setToast({ message: 'Meeting booking link opened!', type: 'info' });
                 }}
                 className="text-xs px-3 py-1 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700"

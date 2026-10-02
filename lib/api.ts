@@ -1,4 +1,5 @@
-const API_URL = 'https://segment-humorless-glory.ngrok-free.dev/api';
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api`;
+
 
 // Auth
 export const loginUser = async (email: string, password: string) => {

@@ -57,7 +57,7 @@ export default function DashboardPage() {
         <div className="flex gap-2">
           <Button variant="primary" onClick={async () => {
             try {
-              const res = await fetch('http://localhost:5000/api/outreach/run', { method: 'POST' });
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/outreach/run`, { method: 'POST' });
               const data = await res.json();
               setToast({ message: data.message, type: 'success' });
             } catch (error) {
