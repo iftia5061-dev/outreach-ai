@@ -8,6 +8,8 @@ import Toast from '@/components/Toast';
 
 export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
+  const [subscription, setSubscription] = useState<any>(null);
+  const [usage, setUsage] = useState({ prospects: 0, clients: 0 });
   const [settings, setSettings] = useState({
     companyName: 'Aegean Yacht Group',
     email: 'admin@aegeanyacht.com',
@@ -26,8 +28,24 @@ export default function SettingsPage() {
   });
 
   useEffect(() => {
+    fetchSubscription();
     setTimeout(() => setLoading(false), 500);
   }, []);
+
+  const fetchSubscription = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions/status`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      const data = await response.json();
+      setSubscription(data.subscription);
+      setUsage(data.usage);
+    } catch (error) {
+      console.error('Failed to fetch subscription:', error);
+    }
+  };
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
@@ -324,6 +342,47 @@ export default function SettingsPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Subscription Info Card */}
+        <div className="mt-6 bg-gray-800 border border-gray-700 rounded-xl p-4">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-medium text-white">Subscription Status</p>
+            <Link href="/billing" className="text-xs text-blue-400 hover:text-blue-300">
+              Manage →
+            </Link>
+          </div>
+          {subscription ? (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Plan:</span>
+                <span className="text-white capitalize">{subscription.plan_type}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Status:</span>
+                <span className={`capitalize ${subscription.status === 'active' ? 'text-green-400' : 'text-red-400'}`}>
+                  {subscription.status}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Prospects:</span>
+                <span className="text-white">{usage.prospects} used</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Clients:</span>
+                <span className="text-white">{usage.clients} used</span>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-sm text-gray-400 mb-3">No active subscription</p>
+              <Link href="/pricing">
+                <Button variant="primary" size="sm">
+                  View Plans
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="mt-6">
