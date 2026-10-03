@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface Plan {
@@ -15,47 +15,66 @@ interface Plan {
   };
 }
 
+// Static plans - no API call needed to view
+const STATIC_PLANS: Record<string, Plan> = {
+  starter: {
+    name: 'Starter',
+    price_monthly: 49,
+    price_yearly: 490,
+    features: ['1 client', '500 prospects', 'Email only'],
+    limits: { clients: 1, prospects: 500, channels: ['email'] },
+  },
+  professional: {
+    name: 'Professional',
+    price_monthly: 99,
+    price_yearly: 990,
+    features: ['5 clients', '2000 prospects', 'Email + WhatsApp'],
+    limits: { clients: 5, prospects: 2000, channels: ['email', 'whatsapp'] },
+  },
+  enterprise: {
+    name: 'Enterprise',
+    price_monthly: 249,
+    price_yearly: 2490,
+    features: ['Unlimited clients', 'Unlimited prospects', 'Email + WhatsApp + LinkedIn + Telephone AI'],
+    limits: { clients: Infinity, prospects: Infinity, channels: ['email', 'whatsapp', 'linkedin', 'telephone'] },
+  },
+};
+
 export default function PricingPage() {
   const router = useRouter();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const [plans, setPlans] = useState<Record<string, Plan>>({});
-  const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchPlans();
-  }, []);
-
-  const fetchPlans = async () => {
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions/plans`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      const data = await response.json();
-      setPlans(data.plans);
-    } catch (error) {
-      console.error('Failed to fetch plans:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const plans = STATIC_PLANS;
 
   const handleSelectPlan = async (planType: string) => {
     setSelectedPlan(planType);
+    
+    // Check if user is logged in
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Please login first to subscribe to a plan');
+      router.push('/login');
+      return;
+    }
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions/checkout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           plan_type: planType,
           billing_cycle: billingCycle,
         }),
       });
+
+      if (response.status === 401) {
+        alert('Session expired. Please login again.');
+        router.push('/login');
+        return;
+      }
 
       const data = await response.json();
 
@@ -67,17 +86,11 @@ export default function PricingPage() {
       }
     } catch (error) {
       console.error('Checkout error:', error);
-      alert('Failed to start checkout process');
+      alert('Failed to start checkout process. Please try again.');
+    } finally {
+      setSelectedPlan(null);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading plans...</div>
-      </div>
-    );
-  }
 
   const planTypes = ['starter', 'professional', 'enterprise'] as const;
 

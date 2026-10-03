@@ -34,11 +34,21 @@ export default function SettingsPage() {
 
   const fetchSubscription = async () => {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        return;
+      }
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions/status`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${token}`,
         },
       });
+
+      if (response.status === 401) {
+        return;
+      }
+
       const data = await response.json();
       setSubscription(data.subscription);
       setUsage(data.usage);
