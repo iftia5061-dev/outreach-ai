@@ -28,6 +28,8 @@ export default function Sidebar({ className = '' }: SidebarProps) {
     { href: '/telephone-ai', label: 'Telephone AI' },
     { href: '/ai-settings', label: 'AI Settings' },
     { href: '/clients', label: 'Clients' },
+    { href: '/pricing', label: 'Pricing' },
+    { href: '/billing', label: 'Billing' },
     { href: '/settings', label: 'Settings' },
   ];
 
