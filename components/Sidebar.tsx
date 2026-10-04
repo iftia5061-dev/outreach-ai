@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface SidebarProps {
   className?: string;
@@ -9,6 +9,22 @@ interface SidebarProps {
 
 export default function Sidebar({ className = '' }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Clear cookie and redirect to login
+      document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      router.push('/login');
+    }
+  };
 
   const navItems = [
     { href: '/dashboard', label: 'Dashboard' },
@@ -29,7 +45,7 @@ export default function Sidebar({ className = '' }: SidebarProps) {
     { href: '/ai-settings', label: 'AI Settings' },
     { href: '/clients', label: 'Clients' },
     { href: '/consents', label: 'Consents' },
-    { href: '/pricing', label: 'Pricing' },
+    { href: '/pricing', label: 'Subscription' },
     { href: '/billing', label: 'Billing' },
     { href: '/settings', label: 'Settings' },
     { href: '/support', label: 'Support' },
@@ -61,6 +77,14 @@ export default function Sidebar({ className = '' }: SidebarProps) {
           );
         })}
       </nav>
+      <div className="mt-auto p-4 border-t border-gray-700">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition-colors text-red-400 hover:bg-gray-800 w-full"
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 }

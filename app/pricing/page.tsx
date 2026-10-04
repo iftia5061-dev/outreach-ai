@@ -18,25 +18,25 @@ interface Plan {
 
 // Static plans - no API call needed to view
 const STATIC_PLANS: Record<string, Plan> = {
-  starter: {
-    name: 'Starter',
-    price_monthly: 49,
-    price_yearly: 490,
-    features: ['1 client', '500 prospects', 'Email only'],
-    limits: { clients: 1, prospects: 500, channels: ['email'] },
+  free: {
+    name: 'Free',
+    price_monthly: 0,
+    price_yearly: 0,
+    features: ['Up to 3 prospects', 'Email outreach', 'Basic analytics'],
+    limits: { clients: 1, prospects: 3, channels: ['email'] },
   },
-  professional: {
-    name: 'Professional',
+  monthly: {
+    name: 'Monthly',
     price_monthly: 99,
     price_yearly: 990,
-    features: ['5 clients', '2000 prospects', 'Email + WhatsApp'],
-    limits: { clients: 5, prospects: 2000, channels: ['email', 'whatsapp'] },
+    features: ['Unlimited prospects', 'Email + WhatsApp', 'AI assistant', 'Meeting booking'],
+    limits: { clients: 5, prospects: Infinity, channels: ['email', 'whatsapp'] },
   },
-  enterprise: {
-    name: 'Enterprise',
-    price_monthly: 249,
-    price_yearly: 2490,
-    features: ['Unlimited clients', 'Unlimited prospects', 'Email + WhatsApp + LinkedIn + Telephone AI'],
+  yearly: {
+    name: 'Yearly',
+    price_monthly: 74,
+    price_yearly: 890,
+    features: ['Unlimited prospects', 'Email + WhatsApp + LinkedIn', 'AI assistant', 'Telephone AI'],
     limits: { clients: Infinity, prospects: Infinity, channels: ['email', 'whatsapp', 'linkedin', 'telephone'] },
   },
 };
@@ -50,6 +50,13 @@ export default function PricingPage() {
 
   const handleSelectPlan = async (planType: string) => {
     setSelectedPlan(planType);
+
+    // Free plan - no payment needed
+    if (planType === 'free') {
+      alert('You are already on the Free plan!');
+      setSelectedPlan(null);
+      return;
+    }
 
     try {
       const data = await createCheckoutSession({
@@ -81,7 +88,7 @@ export default function PricingPage() {
     }
   };
 
-  const planTypes = ['starter', 'professional', 'enterprise'] as const;
+  const planTypes = ['free', 'monthly', 'yearly'] as const;
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -110,7 +117,7 @@ export default function PricingPage() {
               />
             </button>
             <span className={`text-sm ${billingCycle === 'yearly' ? 'font-semibold' : 'text-gray-600'}`}>
-              Yearly <span className="text-green-600 text-xs">(Save 17%)</span>
+              Yearly <span className="text-green-600 text-xs">(Save 25%)</span>
             </span>
           </div>
         </div>
@@ -121,17 +128,17 @@ export default function PricingPage() {
             const plan = plans[planType];
             if (!plan) return null;
 
-            const price = billingCycle === 'monthly' ? plan.price_monthly : plan.price_yearly;
-            const period = billingCycle === 'monthly' ? '/month' : '/year';
+            const price = planType === 'free' ? 0 : (billingCycle === 'monthly' ? plan.price_monthly : plan.price_yearly);
+            const period = planType === 'free' ? 'Forever' : (billingCycle === 'monthly' ? '/month' : '/year');
 
             return (
               <div
                 key={planType}
                 className={`bg-white rounded-2xl shadow-lg p-8 border-2 transition-all hover:shadow-xl ${
-                  planType === 'professional' ? 'border-blue-500 relative' : 'border-gray-200'
+                  planType === 'monthly' ? 'border-blue-500 relative' : 'border-gray-200'
                 }`}
               >
-                {planType === 'professional' && (
+                {planType === 'monthly' && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                     <span className="bg-blue-600 text-white text-sm px-4 py-1 rounded-full">
                       Most Popular
@@ -170,12 +177,12 @@ export default function PricingPage() {
                   onClick={() => handleSelectPlan(planType)}
                   disabled={selectedPlan === planType}
                   className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
-                    planType === 'professional'
+                    planType === 'monthly'
                       ? 'bg-blue-600 text-white hover:bg-blue-700'
                       : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                   } ${selectedPlan === planType ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  {selectedPlan === planType ? 'Processing...' : 'Get Started'}
+                  {selectedPlan === planType ? 'Processing...' : planType === 'free' ? 'Current Plan' : 'Subscribe'}
                 </button>
               </div>
             );

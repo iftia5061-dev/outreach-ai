@@ -1,16 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { loginUser, registerUser, googleLoginUser } from '@/lib/api';
+import { googleLoginUser } from '@/lib/api';
 import { googleSignInGetToken } from '@/lib/firebase';
-
-const typingTexts = [
-  "AI contacts every yacht manager automatically...",
-  "Qualifies leads and books meetings for you...",
-  "Works 24/7 across Email, WhatsApp & LinkedIn...",
-  "Turns prospects into confirmed meetings...",
-];
 
 const cards = [
   { icon: "✉️", title: "Email Outreach", desc: "AI sends personalized emails to captains & managers" },
@@ -18,39 +11,6 @@ const cards = [
   { icon: "📅", title: "Meeting Booking", desc: "Auto-schedules 15-min calls with interested leads" },
   { icon: "📊", title: "Analytics", desc: "Track every prospect from contact to conversion" },
 ];
-
-const BUBBLE_DATA = [
-  { id: 0, size: 12, left: 5, duration: 14, delay: 0, opacity: 0.15 },
-  { id: 1, size: 8, left: 12, duration: 11, delay: 2, opacity: 0.1 },
-  { id: 2, size: 18, left: 20, duration: 16, delay: 1, opacity: 0.12 },
-  { id: 3, size: 7, left: 28, duration: 13, delay: 4, opacity: 0.18 },
-  { id: 4, size: 14, left: 35, duration: 10, delay: 0.5, opacity: 0.08 },
-  { id: 5, size: 10, left: 42, duration: 15, delay: 3, opacity: 0.14 },
-  { id: 6, size: 20, left: 50, duration: 12, delay: 1.5, opacity: 0.1 },
-  { id: 7, size: 9, left: 58, duration: 17, delay: 2.5, opacity: 0.16 },
-  { id: 8, size: 15, left: 65, duration: 11, delay: 0, opacity: 0.12 },
-  { id: 9, size: 6, left: 72, duration: 14, delay: 3.5, opacity: 0.2 },
-  { id: 10, size: 11, left: 78, duration: 13, delay: 1, opacity: 0.1 },
-  { id: 11, size: 16, left: 85, duration: 16, delay: 2, opacity: 0.14 },
-  { id: 12, size: 8, left: 90, duration: 10, delay: 4.5, opacity: 0.18 },
-  { id: 13, size: 13, left: 95, duration: 15, delay: 0.5, opacity: 0.1 },
-  { id: 14, size: 19, left: 8, duration: 12, delay: 3, opacity: 0.08 },
-  { id: 15, size: 7, left: 55, duration: 18, delay: 1.5, opacity: 0.15 },
-  { id: 16, size: 12, left: 33, duration: 11, delay: 5, opacity: 0.12 },
-  { id: 17, size: 10, left: 68, duration: 14, delay: 2, opacity: 0.16 },
-];
-
-const inputStyle = {
-  width: '100%',
-  padding: '11px 14px',
-  borderRadius: '10px',
-  background: 'rgba(255,255,255,0.06)',
-  border: '1px solid rgba(255,255,255,0.1)',
-  color: '#fff',
-  fontSize: '14px',
-  outline: 'none',
-  boxSizing: 'border-box' as const,
-};
 
 const primaryBtnStyle = {
   width: '100%',
@@ -64,99 +24,48 @@ const primaryBtnStyle = {
   boxShadow: '0 4px 20px rgba(37,99,235,0.4)',
 };
 
+const planCardStyle = {
+  background: 'rgba(255,255,255,0.04)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '16px',
+  padding: '24px',
+  cursor: 'pointer',
+  transition: 'all 0.3s ease',
+};
+
+const selectedPlanStyle = {
+  background: 'rgba(37,99,235,0.15)',
+  border: '2px solid #3b82f6',
+};
+
 export default function LoginPage() {
   const router = useRouter();
-  const [mode, setMode] = useState<'main' | 'create'>('main');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [typingIndex, setTypingIndex] = useState(0);
-  const [displayText, setDisplayText] = useState('');
-  const [charIndex, setCharIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [cursorVisible, setCursorVisible] = useState(true);
-
-  useEffect(() => {
-    const cursor = setInterval(() => setCursorVisible(v => !v), 500);
-    return () => clearInterval(cursor);
-  }, []);
-
-  useEffect(() => {
-    const current = typingTexts[typingIndex];
-    const speed = isDeleting ? 25 : 55;
-    const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        setDisplayText(current.slice(0, charIndex + 1));
-        if (charIndex + 1 === current.length) {
-          setTimeout(() => setIsDeleting(true), 2500);
-        } else {
-          setCharIndex(c => c + 1);
-        }
-      } else {
-        setDisplayText(current.slice(0, charIndex - 1));
-        if (charIndex === 0) {
-          setIsDeleting(false);
-          setTypingIndex(i => (i + 1) % typingTexts.length);
-        } else {
-          setCharIndex(c => c - 1);
-        }
-      }
-    }, speed);
-    return () => clearTimeout(timeout);
-  }, [charIndex, isDeleting, typingIndex]);
+  const [selectedPlan, setSelectedPlan] = useState<'free' | 'monthly' | 'yearly' | null>(null);
 
   const handleGoogle = async () => {
     if (loading) return;
+    if (!selectedPlan) {
+      alert('Please select a plan to continue');
+      return;
+    }
     setLoading(true);
     try {
       const idToken = await googleSignInGetToken();
       const res = await googleLoginUser(idToken);
       if (res.user) {
+        // Save selected plan in localStorage for post-login redirect
+        if (selectedPlan && selectedPlan !== 'free') {
+          localStorage.setItem('selectedPlan', selectedPlan);
+        }
         router.push('/dashboard');
         return;
       }
       alert(res.message || 'Google login failed');
     } catch (e: any) {
-      // User closed the popup: not an error worth showing
       if (e?.code !== 'auth/popup-closed-by-user' && e?.code !== 'auth/cancelled-popup-request') {
         alert(e?.message || 'Google login failed');
       }
-    }
-    setLoading(false);
-  };
-
-  const handleLogin = async () => {
-    if (loading) return;
-    if (!email || !password) { alert('Enter email and password'); return; }
-    setLoading(true);
-    try {
-      const res = await loginUser(email, password);
-      if (res.user) {
-        // Token is in an httpOnly cookie, nothing to store in localStorage
-        router.push('/dashboard');
-        return;
-      }
-      alert(res.message || 'Login failed');
-    } catch {
-      alert('Could not reach the server. Please try again.');
-    }
-    setLoading(false);
-  };
-
-  const handleRegister = async () => {
-    if (loading) return;
-    if (!name || !email || !password) { alert('Fill all fields'); return; }
-    setLoading(true);
-    try {
-      const res = await registerUser(name, email, password);
-      if (res.user) {
-        router.push('/dashboard');
-        return;
-      }
-      alert(res.message || 'Registration failed');
-    } catch {
-      alert('Could not reach the server. Please try again.');
     }
     setLoading(false);
   };
@@ -170,12 +79,6 @@ export default function LoginPage() {
       fontFamily: 'sans-serif',
     }}>
       <style>{`
-        @keyframes floatUp {
-          0% { transform: translateY(100vh) scale(0.6); opacity: 0; }
-          5% { opacity: 1; }
-          95% { opacity: 0.5; }
-          100% { transform: translateY(-120px) scale(1); opacity: 0; }
-        }
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(24px); }
           to { opacity: 1; transform: translateY(0); }
@@ -185,25 +88,8 @@ export default function LoginPage() {
           50% { box-shadow: 0 0 48px rgba(59,130,246,0.5), 0 0 80px rgba(37,99,235,0.2); }
         }
         .fade-in { animation: fadeInUp 0.7s ease forwards; }
-        .card-hover:hover { transform: translateY(-6px) scale(1.02); transition: all 0.3s ease; }
-        .google-btn:hover { background: rgba(255,255,255,0.1) !important; }
+        .plan-card:hover { transform: translateY(-6px); }
       `}</style>
-
-      {/* Bubbles */}
-      {BUBBLE_DATA.map(b => (
-        <div key={b.id} style={{
-          position: 'absolute',
-          bottom: '-60px',
-          left: `${b.left}%`,
-          width: `${b.size}px`,
-          height: `${b.size}px`,
-          borderRadius: '50%',
-          background: `radial-gradient(circle at 35% 35%, rgba(147,197,253,${b.opacity * 2.5}), rgba(59,130,246,${b.opacity}))`,
-          border: `1.5px solid rgba(147,197,253,${b.opacity * 2})`,
-          animation: `floatUp ${b.duration}s ${b.delay}s infinite linear`,
-          pointerEvents: 'none',
-        }} />
-      ))}
 
       {/* Glow orbs */}
       <div style={{ position: 'absolute', top: '10%', left: '5%', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%)', pointerEvents: 'none' }} />
@@ -219,22 +105,21 @@ export default function LoginPage() {
           <h1 style={{ fontSize: '52px', fontWeight: 700, color: '#ffffff', lineHeight: 1.1, marginBottom: '16px', letterSpacing: '-1px' }}>
             OutreachAI
           </h1>
-          <div style={{ fontSize: '18px', color: '#93c5fd', minHeight: '28px', fontWeight: 400 }}>
-            {displayText}<span style={{ opacity: cursorVisible ? 1 : 0, color: '#60a5fa' }}>|</span>
-          </div>
+          <p style={{ fontSize: '18px', color: '#93c5fd', marginBottom: '32px' }}>
+            Choose your plan to get started
+          </p>
         </div>
 
         {/* Feature Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', width: '100%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', width: '100%', marginBottom: '32px' }}>
           {cards.map((card, i) => (
-            <div key={i} className="card-hover fade-in" style={{
+            <div key={i} className="fade-in" style={{
               animationDelay: `${i * 0.12}s`,
               background: 'rgba(255,255,255,0.04)',
               border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: '16px',
               padding: '24px 20px',
               backdropFilter: 'blur(12px)',
-              cursor: 'default',
             }}>
               <div style={{ fontSize: '26px', marginBottom: '10px' }}>{card.icon}</div>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0', marginBottom: '6px' }}>{card.title}</div>
@@ -243,7 +128,72 @@ export default function LoginPage() {
           ))}
         </div>
 
-        {/* Login Box */}
+        {/* Plan Selection */}
+        <div className="fade-in" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', width: '100%', marginBottom: '32px' }}>
+          {/* Free Plan */}
+          <div 
+            onClick={() => setSelectedPlan('free')}
+            style={{
+              ...planCardStyle,
+              ...(selectedPlan === 'free' ? selectedPlanStyle : {}),
+            }}
+            className="plan-card"
+          >
+            <div style={{ fontSize: '24px', marginBottom: '12px' }}>🆓</div>
+            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#fff', marginBottom: '8px' }}>Free</h3>
+            <div style={{ fontSize: '32px', fontWeight: 700, color: '#22c55e', marginBottom: '8px' }}>$0</div>
+            <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '16px' }}>Forever</div>
+            <ul style={{ fontSize: '13px', color: '#cbd5e1', listStyle: 'none', padding: 0, margin: 0 }}>
+              <li style={{ marginBottom: '8px' }}>✓ Up to 3 prospects</li>
+              <li style={{ marginBottom: '8px' }}>✓ Email outreach</li>
+              <li style={{ marginBottom: '8px' }}>✓ Basic analytics</li>
+            </ul>
+          </div>
+
+          {/* Monthly Plan */}
+          <div 
+            onClick={() => setSelectedPlan('monthly')}
+            style={{
+              ...planCardStyle,
+              ...(selectedPlan === 'monthly' ? selectedPlanStyle : {}),
+            }}
+            className="plan-card"
+          >
+            <div style={{ fontSize: '24px', marginBottom: '12px' }}>⭐</div>
+            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#fff', marginBottom: '8px' }}>Monthly</h3>
+            <div style={{ fontSize: '32px', fontWeight: 700, color: '#3b82f6', marginBottom: '8px' }}>$99</div>
+            <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '16px' }}>per month</div>
+            <ul style={{ fontSize: '13px', color: '#cbd5e1', listStyle: 'none', padding: 0, margin: 0 }}>
+              <li style={{ marginBottom: '8px' }}>✓ Unlimited prospects</li>
+              <li style={{ marginBottom: '8px' }}>✓ Email + WhatsApp</li>
+              <li style={{ marginBottom: '8px' }}>✓ AI assistant</li>
+              <li style={{ marginBottom: '8px' }}>✓ Meeting booking</li>
+            </ul>
+          </div>
+
+          {/* Yearly Plan */}
+          <div 
+            onClick={() => setSelectedPlan('yearly')}
+            style={{
+              ...planCardStyle,
+              ...(selectedPlan === 'yearly' ? selectedPlanStyle : {}),
+            }}
+            className="plan-card"
+          >
+            <div style={{ fontSize: '24px', marginBottom: '12px' }}>🏆</div>
+            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#fff', marginBottom: '8px' }}>Yearly</h3>
+            <div style={{ fontSize: '32px', fontWeight: 700, color: '#8b5cf6', marginBottom: '8px' }}>$890</div>
+            <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '8px' }}>per year (Save 25%)</div>
+            <ul style={{ fontSize: '13px', color: '#cbd5e1', listStyle: 'none', padding: 0, margin: 0 }}>
+              <li style={{ marginBottom: '8px' }}>✓ Unlimited prospects</li>
+              <li style={{ marginBottom: '8px' }}>✓ Email + WhatsApp + LinkedIn</li>
+              <li style={{ marginBottom: '8px' }}>✓ AI assistant</li>
+              <li style={{ marginBottom: '8px' }}>✓ Telephone AI</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Continue with Google */}
         <div className="fade-in" style={{
           background: 'rgba(255,255,255,0.05)',
           border: '1px solid rgba(255,255,255,0.1)',
@@ -254,94 +204,29 @@ export default function LoginPage() {
           backdropFilter: 'blur(20px)',
           animation: 'glow 3s ease-in-out infinite',
         }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#fff', marginBottom: '24px', textAlign: 'center' }}>
+            Get Started
+          </h2>
 
-          {/* MAIN MODE */}
-          {mode === 'main' && (
-            <>
-              <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#fff', marginBottom: '6px', textAlign: 'center' }}>Welcome back</h2>
-              <p style={{ fontSize: '13px', color: '#64748b', textAlign: 'center', marginBottom: '24px' }}>Sign in to OutreachAI</p>
+          <button 
+            onClick={handleGoogle} 
+            disabled={loading || !selectedPlan}
+            style={{
+              ...primaryBtnStyle,
+              cursor: (loading || !selectedPlan) ? 'not-allowed' : 'pointer',
+              opacity: (loading || !selectedPlan) ? 0.6 : 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px',
+            }}
+          >
+            <span style={{ fontSize: '18px' }}>🇬</span> {loading ? 'Please wait...' : 'Continue with Google'}
+          </button>
 
-              {/* Continue with Google (real Firebase login) */}
-              <button className="google-btn" onClick={handleGoogle} disabled={loading} style={{
-                width: '100%', padding: '12px', borderRadius: '10px',
-                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-                color: '#fff', fontSize: '14px', fontWeight: 500,
-                cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '12px',
-              }}>
-                <span style={{ fontSize: '18px' }}>🇬</span> {loading ? 'Please wait...' : 'Continue with Google'}
-              </button>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '16px 0' }}>
-                <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.08)' }} />
-                <span style={{ fontSize: '12px', color: '#475569' }}>or</span>
-                <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.08)' }} />
-              </div>
-
-              <div style={{ marginBottom: '14px' }}>
-                <label style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '6px', display: 'block' }}>Email</label>
-                <input type="email" placeholder="you@company.com" value={email} onChange={e => setEmail(e.target.value)}
-                  style={inputStyle} />
-              </div>
-
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '6px', display: 'block' }}>Password</label>
-                <input type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter') handleLogin(); }}
-                  style={inputStyle} />
-              </div>
-
-              <button onClick={handleLogin} disabled={loading} style={{
-                ...primaryBtnStyle,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.6 : 1,
-                marginBottom: '16px',
-              }}>
-                {loading ? 'Please wait...' : 'Sign in →'}
-              </button>
-
-              <p style={{ textAlign: 'center', fontSize: '13px', color: '#475569' }}>
-                No account?{' '}
-                <span onClick={() => setMode('create')} style={{ color: '#60a5fa', cursor: 'pointer' }}>Create one</span>
-              </p>
-            </>
-          )}
-
-          {/* CREATE ACCOUNT MODE */}
-          {mode === 'create' && (
-            <>
-              <button onClick={() => setMode('main')} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '13px', marginBottom: '16px' }}>← Back</button>
-              <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#fff', marginBottom: '6px' }}>Create account</h2>
-              <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '20px' }}>Start your OutreachAI journey</p>
-
-              <div style={{ marginBottom: '14px' }}>
-                <label style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '6px', display: 'block' }}>Full Name</label>
-                <input type="text" placeholder="Your name" value={name} onChange={e => setName(e.target.value)}
-                  style={inputStyle} />
-              </div>
-
-              <div style={{ marginBottom: '14px' }}>
-                <label style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '6px', display: 'block' }}>Email</label>
-                <input type="email" placeholder="you@company.com" value={email} onChange={e => setEmail(e.target.value)}
-                  style={inputStyle} />
-              </div>
-
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '6px', display: 'block' }}>Password</label>
-                <input type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter') handleRegister(); }}
-                  style={inputStyle} />
-              </div>
-
-              <button onClick={handleRegister} disabled={loading} style={{
-                ...primaryBtnStyle,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.6 : 1,
-              }}>
-                {loading ? 'Please wait...' : 'Create Account →'}
-              </button>
-            </>
-          )}
+          <p style={{ textAlign: 'center', fontSize: '13px', color: '#475569', marginTop: '16px' }}>
+            By continuing, you agree to our Terms of Service and Privacy Policy
+          </p>
         </div>
       </div>
     </div>

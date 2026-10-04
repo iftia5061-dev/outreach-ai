@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { getProspects, getLeads, getMeetings, runAutoOutreach } from '@/lib/api';
 import Toast from '@/components/Toast';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     prospects: 0,
@@ -17,6 +19,14 @@ export default function DashboardPage() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   useEffect(() => {
+    // Check if user selected a paid plan before login
+    const selectedPlan = localStorage.getItem('selectedPlan');
+    if (selectedPlan && selectedPlan !== 'free') {
+      localStorage.removeItem('selectedPlan');
+      router.push('/pricing');
+      return;
+    }
+
     const fetchStats = async () => {
       try {
         const [prospects, leads, meetings] = await Promise.all([
@@ -46,7 +56,7 @@ export default function DashboardPage() {
       }
     };
     fetchStats();
-  }, []);
+  }, [router]);
 
   if (loading) {
     return (
