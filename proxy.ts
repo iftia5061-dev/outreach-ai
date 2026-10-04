@@ -17,14 +17,8 @@ function proxyHandler(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check for auth token (cookie)
-  const token = req.cookies.get('token');
-
-  // If no token and trying to access protected route, redirect to login
-  if (!token) {
-    return NextResponse.redirect(new URL('/login', req.url));
-  }
-
+  // Auth is enforced by the backend API (cookie lives on the API domain),
+  // so the frontend does not check it here.
   return NextResponse.next();
 }
 
