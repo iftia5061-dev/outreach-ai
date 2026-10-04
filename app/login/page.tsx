@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { loginUser, registerUser } from '@/lib/api';
+import { loginUser, registerUser, googleLoginUser } from '@/lib/api';
+import { googleSignInGetToken } from '@/lib/firebase';
 
 const typingTexts = [
   "AI contacts every yacht manager automatically...",
@@ -16,12 +17,6 @@ const cards = [
   { icon: "💬", title: "WhatsApp AI", desc: "Automated conversations that feel human" },
   { icon: "📅", title: "Meeting Booking", desc: "Auto-schedules 15-min calls with interested leads" },
   { icon: "📊", title: "Analytics", desc: "Track every prospect from contact to conversion" },
-];
-
-const GOOGLE_ACCOUNTS = [
-  { name: "John Smith", email: "john.smith@gmail.com", avatar: "JS" },
-  { name: "Marco Bellini", email: "marco.bellini@gmail.com", avatar: "MB" },
-  { name: "Sophie Laurent", email: "sophie.laurent@gmail.com", avatar: "SL" },
 ];
 
 const BUBBLE_DATA = [
@@ -45,12 +40,37 @@ const BUBBLE_DATA = [
   { id: 17, size: 10, left: 68, duration: 14, delay: 2, opacity: 0.16 },
 ];
 
+const inputStyle = {
+  width: '100%',
+  padding: '11px 14px',
+  borderRadius: '10px',
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  color: '#fff',
+  fontSize: '14px',
+  outline: 'none',
+  boxSizing: 'border-box' as const,
+};
+
+const primaryBtnStyle = {
+  width: '100%',
+  padding: '12px',
+  borderRadius: '10px',
+  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+  color: '#fff',
+  fontSize: '14px',
+  fontWeight: 600,
+  border: 'none',
+  boxShadow: '0 4px 20px rgba(37,99,235,0.4)',
+};
+
 export default function LoginPage() {
   const router = useRouter();
-  const [mode, setMode] = useState<'main' | 'google' | 'create'>('main');
+  const [mode, setMode] = useState<'main' | 'create'>('main');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
   const [typingIndex, setTypingIndex] = useState(0);
   const [displayText, setDisplayText] = useState('');
   const [charIndex, setCharIndex] = useState(0);
@@ -86,6 +106,61 @@ export default function LoginPage() {
     return () => clearTimeout(timeout);
   }, [charIndex, isDeleting, typingIndex]);
 
+  const handleGoogle = async () => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      const idToken = await googleSignInGetToken();
+      const res = await googleLoginUser(idToken);
+      if (res.user) {
+        router.push('/dashboard');
+        return;
+      }
+      alert(res.message || 'Google login failed');
+    } catch (e: any) {
+      // User closed the popup: not an error worth showing
+      if (e?.code !== 'auth/popup-closed-by-user' && e?.code !== 'auth/cancelled-popup-request') {
+        alert(e?.message || 'Google login failed');
+      }
+    }
+    setLoading(false);
+  };
+
+  const handleLogin = async () => {
+    if (loading) return;
+    if (!email || !password) { alert('Enter email and password'); return; }
+    setLoading(true);
+    try {
+      const res = await loginUser(email, password);
+      if (res.user) {
+        // Token is in an httpOnly cookie, nothing to store in localStorage
+        router.push('/dashboard');
+        return;
+      }
+      alert(res.message || 'Login failed');
+    } catch {
+      alert('Could not reach the server. Please try again.');
+    }
+    setLoading(false);
+  };
+
+  const handleRegister = async () => {
+    if (loading) return;
+    if (!name || !email || !password) { alert('Fill all fields'); return; }
+    setLoading(true);
+    try {
+      const res = await registerUser(name, email, password);
+      if (res.user) {
+        router.push('/dashboard');
+        return;
+      }
+      alert(res.message || 'Registration failed');
+    } catch {
+      alert('Could not reach the server. Please try again.');
+    }
+    setLoading(false);
+  };
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -112,7 +187,6 @@ export default function LoginPage() {
         .fade-in { animation: fadeInUp 0.7s ease forwards; }
         .card-hover:hover { transform: translateY(-6px) scale(1.02); transition: all 0.3s ease; }
         .google-btn:hover { background: rgba(255,255,255,0.1) !important; }
-        .account-row:hover { background: rgba(255,255,255,0.08) !important; }
       `}</style>
 
       {/* Bubbles */}
@@ -187,14 +261,15 @@ export default function LoginPage() {
               <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#fff', marginBottom: '6px', textAlign: 'center' }}>Welcome back</h2>
               <p style={{ fontSize: '13px', color: '#64748b', textAlign: 'center', marginBottom: '24px' }}>Sign in to OutreachAI</p>
 
-              {/* Continue with Google */}
-              <button className="google-btn" onClick={() => setMode('google')} style={{
+              {/* Continue with Google (real Firebase login) */}
+              <button className="google-btn" onClick={handleGoogle} disabled={loading} style={{
                 width: '100%', padding: '12px', borderRadius: '10px',
                 background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-                color: '#fff', fontSize: '14px', fontWeight: 500, cursor: 'pointer',
+                color: '#fff', fontSize: '14px', fontWeight: 500,
+                cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '12px',
               }}>
-                <span style={{ fontSize: '18px' }}>🇬</span> Continue with Google
+                <span style={{ fontSize: '18px' }}>🇬</span> {loading ? 'Please wait...' : 'Continue with Google'}
               </button>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '16px 0' }}>
@@ -206,74 +281,29 @@ export default function LoginPage() {
               <div style={{ marginBottom: '14px' }}>
                 <label style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '6px', display: 'block' }}>Email</label>
                 <input type="email" placeholder="you@company.com" value={email} onChange={e => setEmail(e.target.value)}
-                  style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
+                  style={inputStyle} />
               </div>
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '6px', display: 'block' }}>Password</label>
                 <input type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)}
-                  onKeyPress={e => e.key === 'Enter' && router.push('/dashboard')}
-                  style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
+                  onKeyDown={e => { if (e.key === 'Enter') handleLogin(); }}
+                  style={inputStyle} />
               </div>
 
-              <button onClick={async () => {
-                if (!email || !password) { alert('Enter email and password'); return; }
-                const res = await loginUser(email, password);
-                if (res.user) {
-                  // Token is now in httpOnly cookie, no need to store in localStorage
-                  router.push('/dashboard');
-                } else {
-                  alert(res.message || 'Login failed');
-                }
-              }} style={{
-                width: '100%', padding: '12px', borderRadius: '10px',
-                background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-                color: '#fff', fontSize: '14px', fontWeight: 600, border: 'none', cursor: 'pointer',
-                boxShadow: '0 4px 20px rgba(37,99,235,0.4)', marginBottom: '16px',
+              <button onClick={handleLogin} disabled={loading} style={{
+                ...primaryBtnStyle,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.6 : 1,
+                marginBottom: '16px',
               }}>
-                Sign in →
+                {loading ? 'Please wait...' : 'Sign in →'}
               </button>
 
               <p style={{ textAlign: 'center', fontSize: '13px', color: '#475569' }}>
                 No account?{' '}
                 <span onClick={() => setMode('create')} style={{ color: '#60a5fa', cursor: 'pointer' }}>Create one</span>
               </p>
-            </>
-          )}
-
-          {/* GOOGLE ACCOUNTS MODE */}
-          {mode === 'google' && (
-            <>
-              <button onClick={() => setMode('main')} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '13px', marginBottom: '16px' }}>← Back</button>
-              <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#fff', marginBottom: '6px' }}>Choose an account</h2>
-              <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '20px' }}>to continue to OutreachAI</p>
-
-              {GOOGLE_ACCOUNTS.map((acc, i) => (
-                <div key={i} className="account-row" onClick={() => router.push('/dashboard')} style={{
-                  display: 'flex', alignItems: 'center', gap: '14px',
-                  padding: '12px 14px', borderRadius: '12px',
-                  background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)',
-                  cursor: 'pointer', marginBottom: '10px',
-                }}>
-                  <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 600, color: '#fff', flexShrink: 0 }}>
-                    {acc.avatar}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0' }}>{acc.name}</div>
-                    <div style={{ fontSize: '12px', color: '#64748b' }}>{acc.email}</div>
-                  </div>
-                </div>
-              ))}
-
-              <div onClick={() => router.push('/dashboard')} className="account-row" style={{
-                display: 'flex', alignItems: 'center', gap: '14px',
-                padding: '12px 14px', borderRadius: '12px',
-                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)',
-                cursor: 'pointer', marginTop: '4px',
-              }}>
-                <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>+</div>
-                <div style={{ fontSize: '13px', color: '#94a3b8' }}>Use another account</div>
-              </div>
             </>
           )}
 
@@ -287,37 +317,28 @@ export default function LoginPage() {
               <div style={{ marginBottom: '14px' }}>
                 <label style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '6px', display: 'block' }}>Full Name</label>
                 <input type="text" placeholder="Your name" value={name} onChange={e => setName(e.target.value)}
-                  style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
+                  style={inputStyle} />
               </div>
 
               <div style={{ marginBottom: '14px' }}>
                 <label style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '6px', display: 'block' }}>Email</label>
                 <input type="email" placeholder="you@company.com" value={email} onChange={e => setEmail(e.target.value)}
-                  style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
+                  style={inputStyle} />
               </div>
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '6px', display: 'block' }}>Password</label>
                 <input type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)}
-                  style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
+                  onKeyDown={e => { if (e.key === 'Enter') handleRegister(); }}
+                  style={inputStyle} />
               </div>
 
-              <button onClick={async () => {
-                if (!name || !email || !password) { alert('Fill all fields'); return; }
-                const res = await registerUser(name, email, password);
-                if (res.user) {
-                  // Token is now in httpOnly cookie, no need to store in localStorage
-                  router.push('/dashboard');
-                } else {
-                  alert(res.message || 'Registration failed');
-                }
-              }} style={{
-                width: '100%', padding: '12px', borderRadius: '10px',
-                background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-                color: '#fff', fontSize: '14px', fontWeight: 600, border: 'none', cursor: 'pointer',
-                boxShadow: '0 4px 20px rgba(37,99,235,0.4)',
+              <button onClick={handleRegister} disabled={loading} style={{
+                ...primaryBtnStyle,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.6 : 1,
               }}>
-                Create Account →
+                {loading ? 'Please wait...' : 'Create Account →'}
               </button>
             </>
           )}

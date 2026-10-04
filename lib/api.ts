@@ -250,3 +250,14 @@ export const createBookingLink = async (data: any) => {
   });
   return safeJsonParse(res);
 };
+export const googleLoginUser = async (idToken: string) => {
+  const res = await fetch(`${API_URL}/auth/google`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ idToken }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Google login failed');
+  return data;
+};
