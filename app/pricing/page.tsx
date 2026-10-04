@@ -60,8 +60,8 @@ export default function PricingPage() {
 
     try {
       const data = await createCheckoutSession({
-        plan_type: planType,
-        billing_cycle: billingCycle,
+        plan_type: 'professional',
+        billing_cycle: planType === 'yearly' ? 'yearly' : 'monthly',
       });
 
       if (data.error) {
