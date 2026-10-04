@@ -16,21 +16,32 @@ export default function ProspectsPage() {
 
   useEffect(() => {
     const fetchProspects = async () => {
-      const data = await getProspects();
-      setProspects(data);
-      setLoading(false);
+      try {
+        const data = await getProspects();
+        if (data.error) {
+          console.error('API error:', data.error);
+          setProspects([]);
+        } else {
+          setProspects(Array.isArray(data) ? data : []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch prospects:', error);
+        setProspects([]);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchProspects();
   }, []);
 
-  const filteredProspects = prospects.filter(p => {
+  const filteredProspects = Array.isArray(prospects) ? prospects.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          p.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          p.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'All Status' || p.status === statusFilter;
     const matchesInterest = interestFilter === 'All Interest' || p.interest === interestFilter;
     return matchesSearch && matchesStatus && matchesInterest;
-  });
+  }) : [];
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);

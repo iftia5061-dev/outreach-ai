@@ -11,6 +11,7 @@ export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [newCampaign, setNewCampaign] = useState({
     name: '',
     audience: '',
@@ -20,9 +21,20 @@ export default function CampaignsPage() {
 
   useEffect(() => {
     const fetchCampaigns = async () => {
-      const data = await getCampaigns();
-      setCampaigns(data);
-      setLoading(false);
+      try {
+        const data = await getCampaigns();
+        if (data.error) {
+          console.error('API error:', data.error);
+          setCampaigns([]);
+        } else {
+          setCampaigns(Array.isArray(data) ? data : []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch campaigns:', error);
+        setCampaigns([]);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchCampaigns();
   }, []);
@@ -48,25 +60,23 @@ export default function CampaignsPage() {
       status: 'Active',
       message: newCampaign.message,
     });
-    setCampaigns([...campaigns, campaign]);
+    setCampaigns(Array.isArray(campaigns) ? [...campaigns, campaign] : [campaign]);
     setShowCreateForm(false);
     setNewCampaign({ name: '', audience: '', channel: 'Email', message: '' });
     setToast({ message: 'Campaign created successfully!', type: 'success' });
   };
 
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
-
   const handleToggleStatus = (id: number) => {
-    setCampaigns(campaigns.map(c => 
+    setCampaigns(Array.isArray(campaigns) ? campaigns.map(c => 
       c.id === id 
         ? { ...c, status: c.status === 'Active' ? 'Paused' : 'Active' }
         : c
-    ));
+    ) : []);
     setToast({ message: 'Campaign status updated', type: 'success' });
   };
 
   const handleDelete = (id: number) => {
-    setCampaigns(campaigns.filter(c => c.id !== id));
+    setCampaigns(Array.isArray(campaigns) ? campaigns.filter(c => c.id !== id) : []);
     setToast({ message: 'Campaign deleted', type: 'success' });
   };
 
@@ -133,7 +143,7 @@ export default function CampaignsPage() {
               </tr>
             </thead>
             <tbody>
-              {campaigns.map((c) => (
+              {Array.isArray(campaigns) && campaigns.map((c) => (
                 <tr key={c.id} className="border-b border-gray-700 last:border-0 hover:bg-gray-700">
                   <td className="px-4 py-3 text-white font-medium">{c.name}</td>
                   <td className="px-4 py-3 text-gray-400">{c.audience}</td>
@@ -165,6 +175,13 @@ export default function CampaignsPage() {
                   </td>
                 </tr>
               ))}
+              {!Array.isArray(campaigns) || campaigns.length === 0 && (
+                <tr>
+                  <td colSpan={9} className="px-4 py-8 text-center text-gray-400">
+                    No campaigns found
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

@@ -16,19 +16,30 @@ export default function LeadsPage() {
 
   useEffect(() => {
     const fetchLeads = async () => {
-      const data = await getLeads();
-      setLeads(data);
-      setLoading(false);
+      try {
+        const data = await getLeads();
+        if (data.error) {
+          console.error('API error:', data.error);
+          setLeads([]);
+        } else {
+          setLeads(Array.isArray(data) ? data : []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch leads:', error);
+        setLeads([]);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchLeads();
   }, []);
 
-  const filteredLeads = leads.filter(lead => {
+  const filteredLeads = Array.isArray(leads) ? leads.filter(lead => {
     const matchesStatus = statusFilter === 'All' || lead.status === statusFilter;
     const matchesSearch = lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          lead.company.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesStatus && matchesSearch;
-  });
+  }) : [];
 
   const statusColor: Record<string, string> = {
     New: "bg-blue-900 text-blue-400",
@@ -88,7 +99,7 @@ export default function LeadsPage() {
             </tr>
           </thead>
           <tbody>
-            {filteredLeads.map((lead) => (
+            {Array.isArray(filteredLeads) && filteredLeads.map((lead) => (
               <tr 
                 key={lead.id} 
                 onClick={() => setSelectedLead(lead)}
@@ -105,6 +116,13 @@ export default function LeadsPage() {
                 <td className="px-4 py-3 text-green-400 font-medium">{lead.value}</td>
               </tr>
             ))}
+            {!Array.isArray(filteredLeads) || filteredLeads.length === 0 && (
+              <tr>
+                <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
+                  No leads found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

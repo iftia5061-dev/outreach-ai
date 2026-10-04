@@ -14,9 +14,20 @@ export default function MeetingsPage() {
 
   useEffect(() => {
     const fetchMeetings = async () => {
-      const data = await getMeetings();
-      setMeetings(data);
-      setLoading(false);
+      try {
+        const data = await getMeetings();
+        if (data.error) {
+          console.error('API error:', data.error);
+          setMeetings([]);
+        } else {
+          setMeetings(Array.isArray(data) ? data : []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch meetings:', error);
+        setMeetings([]);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchMeetings();
   }, []);
@@ -26,13 +37,13 @@ export default function MeetingsPage() {
   };
 
   const handleCancel = (id: number) => {
-    setMeetings(meetings.map(m => m.id === id ? { ...m, status: 'Cancelled' } : m));
+    setMeetings(Array.isArray(meetings) ? meetings.map(m => m.id === id ? { ...m, status: 'Cancelled' } : m) : []);
     setToast({ message: 'Meeting cancelled', type: 'info' });
   };
 
   const filteredMeetings = statusFilter === 'All' 
     ? meetings 
-    : meetings.filter(m => m.status === statusFilter);
+    : Array.isArray(meetings) ? meetings.filter(m => m.status === statusFilter) : [];
 
   const statusColor: Record<string, string> = {
     Upcoming: "bg-blue-600 text-white",
@@ -86,7 +97,7 @@ export default function MeetingsPage() {
             </tr>
           </thead>
           <tbody>
-            {filteredMeetings.map((m) => (
+            {Array.isArray(filteredMeetings) && filteredMeetings.map((m) => (
               <tr key={m.id} className="border-b border-gray-700 last:border-0 hover:bg-gray-700">
                 <td className="px-4 py-3 text-white font-medium">{m.name}</td>
                 <td className="px-4 py-3 text-gray-400">{m.company}</td>
@@ -121,6 +132,13 @@ export default function MeetingsPage() {
                 </td>
               </tr>
             ))}
+            {!Array.isArray(filteredMeetings) || filteredMeetings.length === 0 && (
+              <tr>
+                <td colSpan={6} className="px-4 py-8 text-center text-gray-400">
+                  No meetings found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

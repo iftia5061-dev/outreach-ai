@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { getSubscriptionStatus, createBillingPortal } from '@/lib/api';
 
 interface Subscription {
   id: number;
@@ -49,24 +50,15 @@ export default function BillingPage() {
 
   const fetchSubscription = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setLoading(false);
-        return;
+      const data = await getSubscriptionStatus();
+      
+      if (data.error) {
+        if (data.error.includes('Unauthorized') || data.error.includes('401')) {
+          setLoading(false);
+          return;
+        }
       }
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions/status`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 401) {
-        setLoading(false);
-        return;
-      }
-
-      const data = await response.json();
+      
       setSubscription(data.subscription);
       setPlan(data.plan);
       setUsage(data.usage);
@@ -84,18 +76,20 @@ export default function BillingPage() {
 
     setActionLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions/cancel`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/subscriptions/cancel`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
         },
+        credentials: 'include',
       });
 
       if (response.ok) {
         alert('Subscription will be cancelled at the end of the billing period');
         fetchSubscription();
       } else {
-        alert('Failed to cancel subscription');
+        const data = await response.json();
+        alert(data.error || 'Failed to cancel subscription');
       }
     } catch (error) {
       console.error('Cancel error:', error);
@@ -108,24 +102,41 @@ export default function BillingPage() {
   const handleResume = async () => {
     setActionLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions/resume`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/subscriptions/resume`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
         },
+        credentials: 'include',
       });
 
       if (response.ok) {
         alert('Subscription resumed successfully');
         fetchSubscription();
       } else {
-        alert('Failed to resume subscription');
+        const data = await response.json();
+        alert(data.error || 'Failed to resume subscription');
       }
     } catch (error) {
       console.error('Resume error:', error);
       alert('Failed to resume subscription');
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const handleManageBilling = async () => {
+    try {
+      const data = await createBillingPortal();
+      
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'Failed to open billing portal');
+      }
+    } catch (error) {
+      console.error('Billing portal error:', error);
+      alert('Failed to open billing portal');
     }
   };
 
@@ -220,6 +231,12 @@ export default function BillingPage() {
                 {subscription.status === 'active' && !subscription.cancel_at_period_end ? (
                   <>
                     <button
+                      onClick={handleManageBilling}
+                      className="flex-1 bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+                    >
+                      Manage Billing
+                    </button>
+                    <button
                       onClick={handleCancel}
                       disabled={actionLoading}
                       className="flex-1 bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
@@ -228,7 +245,7 @@ export default function BillingPage() {
                     </button>
                     <button
                       onClick={handleUpgrade}
-                      className="flex-1 bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+                      className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                     >
                       Change Plan
                     </button>
@@ -294,11 +311,11 @@ export default function BillingPage() {
           </>
         )}
 
-        {/* Test Mode Notice */}
-        <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+        {/* Billing Policy */}
+        <div className="mt-8 bg-gray-50 border border-gray-200 rounded-lg p-6">
           <div className="flex items-start">
             <svg
-              className="w-6 h-6 text-yellow-600 mr-3 flex-shrink-0"
+              className="w-6 h-6 text-gray-600 mr-3 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 20 20"
@@ -311,11 +328,14 @@ export default function BillingPage() {
               />
             </svg>
             <div>
-              <h4 className="font-semibold text-yellow-900 mb-2">Test Mode Environment</h4>
-              <p className="text-yellow-800 text-sm">
-                This is a test environment. No real payments are processed. All subscriptions and
-                invoices are for demonstration purposes only.
-              </p>
+              <h4 className="font-semibold text-gray-900 mb-2">Billing Policy</h4>
+              <ul className="text-gray-700 text-sm space-y-1">
+                <li>• All prices are in USD</li>
+                <li>• Invoices are generated at the start of each billing cycle</li>
+                <li>• Refunds available within 7 days of purchase</li>
+                <li>• Cancel anytime: access continues until billing period ends</li>
+                <li>• Manage payment methods in billing portal</li>
+              </ul>
             </div>
           </div>
         </div>

@@ -6,6 +6,9 @@ import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
 import { mockCalls } from '@/lib/mockData';
 
+// ⚠️ DEMO FEATURE: This page uses mock data and is not yet connected to a real API
+// Telephone AI requires Twilio integration which should be implemented before production use
+
 const calls = mockCalls;
 
 const statusColor: Record<string, string> = {
@@ -51,6 +54,21 @@ export default function TelephoneAIPage() {
 
   return (
     <div className="min-h-screen bg-gray-950 p-6">
+      {/* Demo Warning Banner */}
+      <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4 mb-6">
+        <div className="flex items-start gap-3">
+          <svg className="w-5 h-5 text-yellow-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div>
+            <p className="text-sm font-medium text-yellow-400">Demo Feature</p>
+            <p className="text-xs text-yellow-300/70 mt-1">
+              This page uses mock data and is not yet connected to a real API. Telephone AI requires Twilio integration which should be implemented before production use.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <button
         onClick={() => window.history.back()}
         className="flex items-center gap-2 text-sm text-gray-400 hover:text-white mb-4"

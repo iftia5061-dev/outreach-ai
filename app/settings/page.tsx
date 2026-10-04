@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
+import { getSubscriptionStatus } from '@/lib/api';
 
 export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
@@ -34,22 +35,14 @@ export default function SettingsPage() {
 
   const fetchSubscription = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        return;
+      const data = await getSubscriptionStatus();
+      
+      if (data.error) {
+        if (data.error.includes('Unauthorized') || data.error.includes('401')) {
+          return;
+        }
       }
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions/status`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 401) {
-        return;
-      }
-
-      const data = await response.json();
+      
       setSubscription(data.subscription);
       setUsage(data.usage);
     } catch (error) {

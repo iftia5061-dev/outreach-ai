@@ -219,8 +219,8 @@ export default function LoginPage() {
               <button onClick={async () => {
                 if (!email || !password) { alert('Enter email and password'); return; }
                 const res = await loginUser(email, password);
-                if (res.token) {
-                  localStorage.setItem('token', res.token);
+                if (res.user) {
+                  // Token is now in httpOnly cookie, no need to store in localStorage
                   router.push('/dashboard');
                 } else {
                   alert(res.message || 'Login failed');
@@ -305,8 +305,8 @@ export default function LoginPage() {
               <button onClick={async () => {
                 if (!name || !email || !password) { alert('Fill all fields'); return; }
                 const res = await registerUser(name, email, password);
-                if (res.token) {
-                  localStorage.setItem('token', res.token);
+                if (res.user) {
+                  // Token is now in httpOnly cookie, no need to store in localStorage
                   router.push('/dashboard');
                 } else {
                   alert(res.message || 'Registration failed');

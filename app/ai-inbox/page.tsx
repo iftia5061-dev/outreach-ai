@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getProspects } from '@/lib/api';
+import { getProspects, updateProspect, createBookingLink } from '@/lib/api';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
@@ -16,19 +16,37 @@ export default function AIInboxPage() {
 
   useEffect(() => {
     const fetchConversations = async () => {
-      const prospects = await getProspects();
-      const convs = prospects.map((p: any) => ({
-        id: p.id,
-        name: p.name,
-        company: p.company,
-        status: p.status,
-        lastMessage: `Last contact: ${p.last_contact || 'Not yet contacted'}`,
-        time: p.last_contact || 'New',
-        unread: p.status === 'Responded',
-        messages: [],
-      }));
-      setConversations(convs);
-      setLoading(false);
+      try {
+        const prospects = await getProspects();
+        
+        // Handle error case
+        if (prospects.error) {
+          console.error('API error:', prospects.error);
+          setConversations([]);
+          setLoading(false);
+          return;
+        }
+        
+        // Ensure prospects is an array
+        const prospectsArray = Array.isArray(prospects) ? prospects : [];
+        
+        const convs = prospectsArray.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          company: p.company,
+          status: p.status,
+          lastMessage: `Last contact: ${p.last_contact || 'Not yet contacted'}`,
+          time: p.last_contact || 'New',
+          unread: p.status === 'Responded',
+          messages: [],
+        }));
+        setConversations(convs);
+      } catch (error) {
+        console.error('Failed to fetch conversations:', error);
+        setConversations([]);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchConversations();
   }, []);
@@ -136,12 +154,12 @@ export default function AIInboxPage() {
               <button
                 onClick={async () => {
                   if (!selectedConversation) { return; }
-                                    await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/prospects/${selectedConversation.id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: 'Interested', interest: 'High', notes: '', next_followup: '' }),
-                  });
-                  setToast({ message: `${selectedConversation.name} marked as Interested!`, type: 'success' });
+                  const data = await updateProspect(selectedConversation.id, { status: 'Interested', interest: 'High', notes: '', next_followup: '' });
+                  if (data.error) {
+                    setToast({ message: data.error, type: 'error' });
+                  } else {
+                    setToast({ message: `${selectedConversation.name} marked as Interested!`, type: 'success' });
+                  }
                 }}
                 className="text-xs px-3 py-1 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700"
               >
@@ -150,22 +168,36 @@ export default function AIInboxPage() {
               <button
                 onClick={async () => {
                   if (!selectedConversation) { return; }
-                  await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/prospects/${selectedConversation.id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: 'Qualified', interest: 'Very High', notes: '', next_followup: '' }),
-                  });
-                  setToast({ message: `${selectedConversation.name} marked as Qualified!`, type: 'success' });
+                  const data = await updateProspect(selectedConversation.id, { status: 'Qualified', interest: 'Very High', notes: '', next_followup: '' });
+                  if (data.error) {
+                    setToast({ message: data.error, type: 'error' });
+                  } else {
+                    setToast({ message: `${selectedConversation.name} marked as Qualified!`, type: 'success' });
+                  }
                 }}
                 className="text-xs px-3 py-1 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700"
               >
                 Mark as Qualified
               </button>
               <button
-                onClick={() => {
+                onClick={async () => {
                   if (!selectedConversation) { return; }
-                  window.open(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/booking/create-link?prospect_name=${selectedConversation.name}&prospect_email=${selectedConversation.email || ''}`, '_blank');
-                  setToast({ message: 'Meeting booking link opened!', type: 'info' });
+                  try {
+                    const data = await createBookingLink({
+                      prospect_name: selectedConversation.name,
+                      prospect_email: selectedConversation.email || '',
+                    });
+                    if (data.error) {
+                      setToast({ message: data.error, type: 'error' });
+                    } else if (data.booking_link || data.url) {
+                      window.open(data.booking_link || data.url, '_blank');
+                      setToast({ message: 'Meeting booking link opened!', type: 'info' });
+                    } else {
+                      setToast({ message: 'Failed to create booking link', type: 'error' });
+                    }
+                  } catch (error) {
+                    setToast({ message: 'Failed to create booking link', type: 'error' });
+                  }
                 }}
                 className="text-xs px-3 py-1 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-700"
               >

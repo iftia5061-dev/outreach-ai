@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { createCheckoutSession } from '@/lib/api';
 
 interface Plan {
   name: string;
@@ -45,41 +46,29 @@ export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const plans = STATIC_PLANS;
+  const isTestMode = process.env.NEXT_PUBLIC_ENV !== 'production';
 
   const handleSelectPlan = async (planType: string) => {
     setSelectedPlan(planType);
-    
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('Please login first to subscribe to a plan');
-      router.push('/login');
-      return;
-    }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions/checkout`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          plan_type: planType,
-          billing_cycle: billingCycle,
-        }),
+      const data = await createCheckoutSession({
+        plan_type: planType,
+        billing_cycle: billingCycle,
       });
 
-      if (response.status === 401) {
-        alert('Session expired. Please login again.');
-        router.push('/login');
+      if (data.error) {
+        if (data.error.includes('Unauthorized') || data.error.includes('401')) {
+          alert('Session expired. Please login again.');
+          router.push('/login');
+        } else {
+          alert(data.error || 'Failed to create checkout session');
+        }
         return;
       }
 
-      const data = await response.json();
-
       if (data.url) {
-        // Redirect to Stripe Checkout (Test Mode)
+        // Redirect to Stripe Checkout
         window.location.href = data.url;
       } else {
         alert('Failed to create checkout session');
@@ -193,11 +182,11 @@ export default function PricingPage() {
           })}
         </div>
 
-        {/* Info Banner */}
-        <div className="mt-12 bg-blue-50 border border-blue-200 rounded-lg p-6">
+        {/* Pricing Policy */}
+        <div className="mt-12 bg-gray-50 border border-gray-200 rounded-lg p-6">
           <div className="flex items-start">
             <svg
-              className="w-6 h-6 text-blue-600 mr-3 flex-shrink-0"
+              className="w-6 h-6 text-gray-600 mr-3 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 20 20"
@@ -210,11 +199,15 @@ export default function PricingPage() {
               />
             </svg>
             <div>
-              <h4 className="font-semibold text-blue-900 mb-2">Test Mode - No Real Money</h4>
-              <p className="text-blue-800 text-sm">
-                This is a test environment using Stripe Test Mode. No real payments will be processed.
-                Use test card number: 4242 4242 4242 4242 with any future date and CVC.
-              </p>
+              <h4 className="font-semibold text-gray-900 mb-2">Pricing & Refund Policy</h4>
+              <ul className="text-gray-700 text-sm space-y-1">
+                <li>• All prices are in USD</li>
+                <li>• Monthly billing: charges recur every month</li>
+                <li>• Yearly billing: save 17% with annual commitment</li>
+                <li>• Cancel anytime: access continues until billing period ends</li>
+                <li>• Refunds available within 7 days of purchase</li>
+                <li>• Taxes may apply based on your location</li>
+              </ul>
             </div>
           </div>
         </div>
