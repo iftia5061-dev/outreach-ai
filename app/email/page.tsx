@@ -17,7 +17,9 @@ export default function EmailPage() {
   const fetchEmails = async () => {
     try {
       const data = await getSentEmails();
-      if (data.emails) {
+      if (data.error) {
+        setError(data.error || 'Failed to load emails');
+      } else if (data.emails) {
         setEmails(data.emails);
       }
     } catch (err: any) {
