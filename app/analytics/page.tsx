@@ -127,22 +127,34 @@ export default function AnalyticsPage() {
             <h3 className="text-sm font-medium text-white mb-4">New Prospects (Last 30 Days)</h3>
             {data.dailyProspects && data.dailyProspects.length > 0 ? (
               <div className="space-y-2">
-                <div className="flex items-end gap-1 h-32 overflow-x-auto pb-2">
-                  {data.dailyProspects.map((item: any) => {
+                <div className="flex items-end gap-1 h-40 overflow-x-auto pb-2">
+                  {data.dailyProspects.map((item: any, index: number) => {
                     const maxCount = Math.max(...data.dailyProspects.map((d: any) => d.count));
-                    const height = maxCount > 0 ? Math.max((item.count / maxCount) * 100, 5) : 5;
+                    const isToday = index === data.dailyProspects.length - 1;
+                    const barHeight = item.count > 0
+                      ? Math.max((item.count / maxCount) * 100, 15)
+                      : 2;
                     const date = new Date(item.date);
                     const dateLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    const showLabel = index % 5 === 0 || isToday;
                     return (
                       <div
                         key={item.date}
-                        className="flex flex-col items-center gap-1 flex-shrink-0 w-8 group relative"
+                        className="flex flex-col items-center gap-1 flex-shrink-0 w-10 group relative"
                       >
                         <div
-                          className="w-6 bg-blue-500/50 hover:bg-blue-500 transition-colors rounded-t"
-                          style={{ height: `${height}%` }}
+                          className={`w-6 rounded-t transition-colors ${
+                            item.count > 0
+                              ? isToday
+                                ? 'bg-blue-400 hover:bg-blue-300'
+                                : 'bg-blue-500/50 hover:bg-blue-500'
+                              : 'bg-gray-600'
+                          }`}
+                          style={{ height: `${barHeight}%` }}
                         />
-                        <span className="text-xs text-gray-500 whitespace-nowrap">{dateLabel}</span>
+                        {showLabel && (
+                          <span className="text-[10px] text-gray-500 whitespace-nowrap">{dateLabel}</span>
+                        )}
                         {/* Tooltip */}
                         <div className="absolute bottom-full mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                           {item.count} prospects
@@ -162,22 +174,34 @@ export default function AnalyticsPage() {
             <h3 className="text-sm font-medium text-white mb-4">Sent Emails (Last 30 Days)</h3>
             {data.dailyEmails && data.dailyEmails.length > 0 ? (
               <div className="space-y-2">
-                <div className="flex items-end gap-1 h-32 overflow-x-auto pb-2">
-                  {data.dailyEmails.map((item: any) => {
+                <div className="flex items-end gap-1 h-40 overflow-x-auto pb-2">
+                  {data.dailyEmails.map((item: any, index: number) => {
                     const maxCount = Math.max(...data.dailyEmails.map((d: any) => d.count));
-                    const height = maxCount > 0 ? Math.max((item.count / maxCount) * 100, 5) : 5;
+                    const isToday = index === data.dailyEmails.length - 1;
+                    const barHeight = item.count > 0
+                      ? Math.max((item.count / maxCount) * 100, 15)
+                      : 2;
                     const date = new Date(item.date);
                     const dateLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    const showLabel = index % 5 === 0 || isToday;
                     return (
                       <div
                         key={item.date}
-                        className="flex flex-col items-center gap-1 flex-shrink-0 w-8 group relative"
+                        className="flex flex-col items-center gap-1 flex-shrink-0 w-10 group relative"
                       >
                         <div
-                          className="w-6 bg-green-500/50 hover:bg-green-500 transition-colors rounded-t"
-                          style={{ height: `${height}%` }}
+                          className={`w-6 rounded-t transition-colors ${
+                            item.count > 0
+                              ? isToday
+                                ? 'bg-green-400 hover:bg-green-300'
+                                : 'bg-green-500/50 hover:bg-green-500'
+                              : 'bg-gray-600'
+                          }`}
+                          style={{ height: `${barHeight}%` }}
                         />
-                        <span className="text-xs text-gray-500 whitespace-nowrap">{dateLabel}</span>
+                        {showLabel && (
+                          <span className="text-[10px] text-gray-500 whitespace-nowrap">{dateLabel}</span>
+                        )}
                         {/* Tooltip */}
                         <div className="absolute bottom-full mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                           {item.count} emails
