@@ -55,8 +55,8 @@ export default function AIInboxPage() {
   }, []);
 
   const filteredConversations = conversations.filter(c =>
-    c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.company.toLowerCase().includes(searchTerm.toLowerCase())
+    (c.name ?? '').toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (c.company ?? '').toString().toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);

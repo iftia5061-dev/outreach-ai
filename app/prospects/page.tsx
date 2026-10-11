@@ -13,6 +13,7 @@ export default function ProspectsPage() {
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [interestFilter, setInterestFilter] = useState('All Interest');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProspects = async () => {
@@ -20,12 +21,15 @@ export default function ProspectsPage() {
         const data = await getProspects();
         if (data.error) {
           console.error('API error:', data.error);
+          setError(data.error);
           setProspects([]);
         } else {
           setProspects(Array.isArray(data) ? data : []);
+          setError(null);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to fetch prospects:', error);
+        setError(error.message || 'Failed to load prospects');
         setProspects([]);
       } finally {
         setLoading(false);
@@ -35,9 +39,9 @@ export default function ProspectsPage() {
   }, []);
 
   const filteredProspects = Array.isArray(prospects) ? prospects.filter(p => {
-    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         p.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         p.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (p.name ?? '').toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (p.company ?? '').toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (p.email ?? '').toString().toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'All Status' || p.status === statusFilter;
     const matchesInterest = interestFilter === 'All Interest' || p.interest === interestFilter;
     return matchesSearch && matchesStatus && matchesInterest;
@@ -70,6 +74,16 @@ export default function ProspectsPage() {
       <div className="min-h-screen bg-gray-950 p-6">
         <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
           <LoadingSkeleton />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-950 p-6">
+        <div className="bg-red-900/30 border border-red-700 rounded-xl p-4">
+          <p className="text-sm text-red-400">Error: {error}</p>
         </div>
       </div>
     );
@@ -108,7 +122,7 @@ export default function ProspectsPage() {
                 if (!file) return;
                 const text = await file.text();
                 const lines = text.split('\n').filter(l => l.trim());
-                const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+                const headers = lines[0].split(',').map(h => (h.trim() ?? '').toString().toLowerCase());
                 let added = 0;
                 for (let i = 1; i < lines.length; i++) {
                   const values = lines[i].split(',').map(v => v.trim());

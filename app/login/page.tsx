@@ -1,47 +1,22 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { googleLoginUser } from '@/lib/api';
 import { googleSignInGetToken } from '@/lib/firebase';
 
-const cards = [
-  { icon: "✉️", title: "Email Outreach", desc: "AI sends personalized emails to prospects" },
-  { icon: "💬", title: "WhatsApp AI", desc: "Automated conversations that feel human" },
-  { icon: "📅", title: "Meeting Booking", desc: "Auto-schedules 15-min calls with interested leads" },
-  { icon: "📊", title: "Analytics", desc: "Track every prospect from contact to conversion" },
-];
-
-const primaryBtnStyle = {
-  width: '100%',
-  padding: '12px',
-  borderRadius: '10px',
-  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-  color: '#fff',
-  fontSize: '14px',
-  fontWeight: 600,
-  border: 'none',
-  boxShadow: '0 4px 20px rgba(37,99,235,0.4)',
-};
-
-const planCardStyle = {
-  background: 'rgba(255,255,255,0.04)',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: '16px',
-  padding: '24px',
-  cursor: 'pointer',
-  transition: 'all 0.3s ease',
-};
-
-const selectedPlanStyle = {
-  background: 'rgba(37,99,235,0.15)',
-  border: '2px solid #3b82f6',
-};
-
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'free' | 'monthly' | 'yearly' | null>(null);
+  const [sessionExpired, setSessionExpired] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('expired') === 'true') {
+      setSessionExpired(true);
+    }
+  }, [searchParams]);
 
   const handleGoogle = async () => {
     if (loading) return;
@@ -68,6 +43,39 @@ export default function LoginPage() {
       }
     }
     setLoading(false);
+  };
+
+  const cards = [
+    { icon: "✉️", title: "Email Outreach", desc: "AI sends personalized emails to prospects" },
+    { icon: "💬", title: "WhatsApp AI", desc: "Automated conversations that feel human" },
+    { icon: "📅", title: "Meeting Booking", desc: "Auto-schedules 15-min calls with interested leads" },
+    { icon: "📊", title: "Analytics", desc: "Track every prospect from contact to conversion" },
+  ];
+
+  const primaryBtnStyle = {
+    width: '100%',
+    padding: '12px',
+    borderRadius: '10px',
+    background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+    color: '#fff',
+    fontSize: '14px',
+    fontWeight: 600,
+    border: 'none',
+    boxShadow: '0 4px 20px rgba(37,99,235,0.4)',
+  };
+
+  const planCardStyle = {
+    background: 'rgba(255,255,255,0.04)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: '16px',
+    padding: '24px',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  };
+
+  const selectedPlanStyle = {
+    background: 'rgba(37,99,235,0.15)',
+    border: '2px solid #3b82f6',
   };
 
   return (
@@ -108,6 +116,11 @@ export default function LoginPage() {
           <p style={{ fontSize: '18px', color: '#93c5fd', marginBottom: '32px' }}>
             Choose your plan to get started
           </p>
+          {sessionExpired && (
+            <div style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid rgba(239, 68, 68, 0.5)', borderRadius: '12px', padding: '12px 16px', marginBottom: '16px' }}>
+              <p style={{ fontSize: '14px', color: '#fca5a5' }}>Session expired, please log in again</p>
+            </div>
+          )}
         </div>
 
         {/* Feature Cards */}
@@ -230,5 +243,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#020818' }}></div>}>
+      <LoginPageContent />
+    </Suspense>
   );
 }

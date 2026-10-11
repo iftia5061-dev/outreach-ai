@@ -36,8 +36,8 @@ export default function LeadsPage() {
 
   const filteredLeads = Array.isArray(leads) ? leads.filter(lead => {
     const matchesStatus = statusFilter === 'All' || lead.status === statusFilter;
-    const matchesSearch = lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         lead.company.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (lead.name ?? '').toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (lead.company ?? '').toString().toLowerCase().includes(searchTerm.toLowerCase());
     return matchesStatus && matchesSearch;
   }) : [];
 

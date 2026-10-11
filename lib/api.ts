@@ -2,6 +2,15 @@ const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/a
 
 // Helper to safely parse JSON response
 const safeJsonParse = async (res: Response) => {
+  // Handle 401 Unauthorized
+  if (res.status === 401) {
+    localStorage.removeItem('token');
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login?expired=true';
+    }
+    return { error: 'Session expired, please log in again' };
+  }
+
   const contentType = res.headers.get('content-type');
   if (contentType && contentType.includes('application/json')) {
     return res.json();
