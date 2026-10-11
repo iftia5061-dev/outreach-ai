@@ -309,3 +309,22 @@ export const getSentEmails = async () => {
   });
   return safeJsonParse(res);
 };
+
+// AI Settings
+export const getAISettings = async () => {
+  const res = await fetch(`${API_URL}/ai/settings`, {
+    headers: getAuthHeaders(),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
+export const updateAISettings = async (data: any) => {
+  const res = await fetch(`${API_URL}/ai/settings`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
