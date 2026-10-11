@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getProspects, createProspect, deleteProspect, updateProspect } from '@/lib/api';
+import { getProspects, createProspect, deleteProspect, updateProspect, grantConsent, revokeConsent } from '@/lib/api';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
@@ -49,6 +49,7 @@ export default function ProspectsPage() {
     name: '', position: '', company: '', yacht: '',
     email: '', phone: '', whatsapp: '', linkedin: '',
     country: '', status: 'New', interest: 'Medium',
+    emailConsent: false,
   });
 
   const handleDelete = async (id: number) => {
@@ -152,6 +153,26 @@ export default function ProspectsPage() {
                 />
               </div>
             ))}
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={newProspect.emailConsent}
+                onChange={(e) => setNewProspect({...newProspect, emailConsent: e.target.checked})}
+                className="w-4 h-4"
+              />
+              <span className="text-sm text-gray-400">Email consent granted</span>
+            </div>
+              <div key={field.key}>
+                <label className="text-xs text-gray-400 mb-1 block">{field.label}</label>
+                <input
+                  type="text"
+                  placeholder={field.placeholder}
+                  value={(newProspect as any)[field.key]}
+                  onChange={(e) => setNewProspect({...newProspect, [field.key]: e.target.value})}
+                  className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 outline-none"
+                />
+              </div>
+            ))}
           </div>
           <div className="mt-4 flex gap-2">
             <Button variant="primary" onClick={async () => {
@@ -159,7 +180,13 @@ export default function ProspectsPage() {
               const result = await createProspect(newProspect);
               setProspects([...prospects, result]);
               setShowAddForm(false);
-              setNewProspect({ name: '', position: '', company: '', yacht: '', email: '', phone: '', whatsapp: '', linkedin: '', country: '', status: 'New', interest: 'Medium' });
+              setNewProspect({ name: '', position: '', company: '', yacht: '', email: '', phone: '', whatsapp: '', linkedin: '', country: '', status: 'New', interest: 'Medium', emailConsent: false });
+
+              // Grant email consent if checked
+              if (newProspect.emailConsent && result.id) {
+                await grantConsent({ consent_type: 'email', prospect_id: result.id, source: 'manual' });
+              }
+
               setToast({ message: 'Prospect added!', type: 'success' });
             }}>
               Save Prospect
@@ -218,6 +245,7 @@ export default function ProspectsPage() {
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Country</th>
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Status</th>
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Interest</th>
+                <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Email Consent</th>
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Last Contact</th>
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Next Follow-up</th>
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Actions</th>
@@ -250,6 +278,27 @@ export default function ProspectsPage() {
                     </select>
                   </td>
                   <td className="px-4 py-3 text-gray-500">{p.interest}</td>
+                  <td className="px-4 py-3">
+                    <input
+                      type="checkbox"
+                      checked={p.emailConsent || false}
+                      onChange={async () => {
+                        if (p.emailConsent) {
+                          await revokeConsent({ consent_type: 'email', prospect_id: p.id });
+                          setToast({ message: 'Email consent revoked', type: 'info' });
+                        } else {
+                          await grantConsent({ consent_type: 'email', prospect_id: p.id, source: 'manual' });
+                          setToast({ message: 'Email consent granted', type: 'success' });
+                        }
+                        // Refresh prospects to update consent status
+                        const data = await getProspects();
+                        if (!data.error && Array.isArray(data)) {
+                          setProspects(data);
+                        }
+                      }}
+                      className="w-4 h-4 cursor-pointer"
+                    />
+                  </td>
                   <td className="px-4 py-3 text-gray-500">{p.lastContact}</td>
                   <td className="px-4 py-3 text-gray-500">{p.nextFollowup}</td>
                   <td className="px-4 py-3">

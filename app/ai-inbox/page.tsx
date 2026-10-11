@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getProspects, updateProspect, createBookingLink, aiGenerateReply, aiSendEmail } from '@/lib/api';
+import { getProspects, updateProspect, createBookingLink, aiGenerateReply, aiSendEmail, grantConsent } from '@/lib/api';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
@@ -79,7 +79,15 @@ export default function AIInboxPage() {
       );
 
       if (result.error) {
-        setToast({ message: result.error, type: 'error' });
+        // Check if error is consent required
+        if (result.error === 'Consent required' || result.message?.includes('consent')) {
+          setToast({
+            message: 'Email consent not granted. Please grant consent in Prospects page.',
+            type: 'error'
+          });
+        } else {
+          setToast({ message: result.error, type: 'error' });
+        }
       } else {
         // Update local state to show message was sent
         const updatedConversations = conversations.map(c =>
@@ -104,6 +112,18 @@ export default function AIInboxPage() {
     } catch (error: any) {
       console.error('Send email error:', error);
       setToast({ message: error.message || 'Failed to send email', type: 'error' });
+    }
+  };
+
+  const handleGrantConsent = async () => {
+    if (!selectedConversation) return;
+
+    try {
+      await grantConsent({ consent_type: 'email', prospect_id: selectedConversation.id, source: 'manual' });
+      setToast({ message: 'Email consent granted. You can now send emails.', type: 'success' });
+    } catch (error: any) {
+      console.error('Grant consent error:', error);
+      setToast({ message: error.message || 'Failed to grant consent', type: 'error' });
     }
   };
 
@@ -349,6 +369,13 @@ export default function AIInboxPage() {
                 disabled={!selectedConversation?.email || !newMessage.trim()}
               >
                 Send
+              </Button>
+              <Button
+                onClick={handleGrantConsent}
+                variant="outline"
+                disabled={!selectedConversation}
+              >
+                Grant Consent
               </Button>
             </div>
           </div>

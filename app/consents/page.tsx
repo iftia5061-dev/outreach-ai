@@ -69,8 +69,8 @@ export default function ConsentsPage() {
 
       <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
         <p className="text-gray-400 text-sm mb-6">
-          Manage your consent preferences for different types of communications. 
-          You can grant or revoke consent at any time.
+          Manage your consent preferences for different types of communications. These are your personal preferences for receiving communications from our platform.
+          Note: Email consent for individual prospects is managed separately in the Prospects page.
         </p>
 
         <div className="space-y-4">
