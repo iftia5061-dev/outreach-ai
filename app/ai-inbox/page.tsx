@@ -92,9 +92,15 @@ export default function AIInboxPage() {
         .map((m: any) => `${m.sender}: ${m.text}`)
         .join('\n');
 
-      const companyInfo = 'Aegean Yacht Group - Yacht refit services in Greece, Malta, Italy, France and Libya';
+      // Get company info from localStorage or use empty string
+      const companyInfo = localStorage.getItem('companyInfo') || '';
 
-      const response = await aiGenerateReply(conversationHistory, companyInfo);
+      const response = await aiGenerateReply(
+        conversationHistory,
+        companyInfo,
+        selectedConversation.name, // prospect name
+        '' // sender name will be fetched from backend
+      );
 
       if (response.error) {
         setToast({ message: response.error, type: 'error' });

@@ -252,22 +252,27 @@ export const createBookingLink = async (data: any) => {
 };
 
 // AI Chat
-export const aiChat = async (message: string, prospect?: any) => {
+export const aiChat = async (message: string, prospect?: any, companyInfo?: string) => {
   const res = await fetch(`${API_URL}/ai/chat`, {
     method: 'POST',
     headers: getAuthHeaders(),
-    body: JSON.stringify({ message, prospect }),
+    body: JSON.stringify({ message, prospect, company_info: companyInfo }),
     credentials: 'include',
   });
   return safeJsonParse(res);
 };
 
 // AI Generate Reply
-export const aiGenerateReply = async (conversationHistory: string, companyInfo: string) => {
+export const aiGenerateReply = async (conversationHistory: string, companyInfo: string, prospectName?: string, senderName?: string) => {
   const res = await fetch(`${API_URL}/ai/generate-reply`, {
     method: 'POST',
     headers: getAuthHeaders(),
-    body: JSON.stringify({ conversation_history: conversationHistory, company_info: companyInfo }),
+    body: JSON.stringify({
+      conversation_history: conversationHistory,
+      company_info: companyInfo,
+      prospect_name: prospectName,
+      sender_name: senderName
+    }),
     credentials: 'include',
   });
   return safeJsonParse(res);

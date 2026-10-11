@@ -46,7 +46,10 @@ export default function AIAssistantPage() {
     setSending(true);
 
     try {
-      const response = await aiChat(question, selectedProspect || undefined);
+      // Get company info from localStorage or use empty string
+      const companyInfo = localStorage.getItem('companyInfo') || '';
+
+      const response = await aiChat(question, selectedProspect || undefined, companyInfo);
 
       if (response.error) {
         setToast({ message: response.error, type: 'error' });
