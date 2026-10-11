@@ -328,3 +328,12 @@ export const updateAISettings = async (data: any) => {
   });
   return safeJsonParse(res);
 };
+
+// Analytics
+export const getAnalytics = async () => {
+  const res = await fetch(`${API_URL}/analytics`, {
+    headers: getAuthHeaders(),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
