@@ -3,13 +3,29 @@
 import { useState, useEffect } from 'react';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
+import { getSentEmails } from '@/lib/api';
 
 export default function EmailPage() {
   const [loading, setLoading] = useState(true);
+  const [emails, setEmails] = useState<any[]>([]);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 500);
+    fetchEmails();
   }, []);
+
+  const fetchEmails = async () => {
+    try {
+      const data = await getSentEmails();
+      if (data.emails) {
+        setEmails(data.emails);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to load emails');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -29,35 +45,72 @@ export default function EmailPage() {
       >
         ← Back
       </button>
-      <h2 className="text-base font-semibold text-white mb-6">Email Inbox</h2>
+      <h2 className="text-base font-semibold text-white mb-6">Sent Emails</h2>
 
-      {/* Info Banner */}
-      <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-4 mb-6">
+      {/* Incoming Email Coming Soon */}
+      <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4 mb-6">
         <div className="flex items-start gap-3">
-          <svg className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 20 20">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg className="w-5 h-5 text-yellow-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
           <div>
-            <p className="text-sm font-medium text-blue-400">Feature Not Yet Implemented</p>
-            <p className="text-xs text-blue-300/70 mt-1">
-              This page requires email inbox integration to display received emails.
+            <p className="text-sm font-medium text-yellow-400">Incoming Emails - Coming Soon</p>
+            <p className="text-xs text-yellow-300/70 mt-1">
+              This section will display received emails after IMAP or Resend inbound webhook integration.
             </p>
-            <div className="mt-3 text-xs text-blue-300/70">
-              <p className="font-medium mb-1">Required for implementation:</p>
-              <ul className="list-disc list-inside space-y-1">
-                <li>IMAP server connection (e.g., Gmail IMAP, Outlook IMAP)</li>
-                <li>OR Resend inbound webhook integration</li>
-                <li>Database table to store received emails</li>
-                <li>Backend API to fetch and sync emails</li>
-              </ul>
-            </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 text-center">
-        <p className="text-sm text-gray-400">No emails to display. Email inbox integration is required.</p>
-      </div>
+      {error && (
+        <div className="bg-red-900/30 border border-red-700 rounded-lg p-4 mb-6">
+          <p className="text-sm text-red-400">{error}</p>
+        </div>
+      )}
+
+      {/* Sent Emails Table */}
+      {emails.length === 0 ? (
+        <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 text-center">
+          <p className="text-sm text-gray-400">এখনো কোনো ইমেইল পাঠানো হয়নি</p>
+        </div>
+      ) : (
+        <div className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-gray-900/50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">প্রাপক</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">বিষয়</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">তারিখ</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">স্ট্যাটাস</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-700">
+              {emails.map((email) => (
+                <tr key={email.id} className="hover:bg-gray-700/30">
+                  <td className="px-4 py-3 text-sm text-gray-300">
+                    {email.prospect_name || email.to_email}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-300 truncate max-w-xs">
+                    {email.subject}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-400">
+                    {new Date(email.sent_at).toLocaleDateString('bn-BD')}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                      email.status === 'sent' 
+                        ? 'bg-green-900/30 text-green-400 border border-green-700'
+                        : 'bg-red-900/30 text-red-400 border border-red-700'
+                    }`}>
+                      {email.status === 'sent' ? 'পাঠানো হয়েছে' : 'ব্যর্থ'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

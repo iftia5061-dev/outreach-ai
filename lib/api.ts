@@ -300,3 +300,12 @@ export const googleLoginUser = async (idToken: string) => {
   if (!res.ok) throw new Error(data.message || 'Google login failed');
   return data;
 };
+
+// Sent Emails
+export const getSentEmails = async () => {
+  const res = await fetch(`${API_URL}/email/sent`, {
+    headers: getAuthHeaders(),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};

@@ -45,6 +45,8 @@ export default function ProspectsPage() {
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editingProspect, setEditingProspect] = useState<any>(null);
   const [newProspect, setNewProspect] = useState({
     name: '', position: '', company: '', yacht: '',
     email: '', phone: '', whatsapp: '', linkedin: '',
@@ -184,6 +186,77 @@ export default function ProspectsPage() {
         </div>
       )}
 
+      {showEditForm && editingProspect && (
+        <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 mb-4">
+          <p className="text-sm font-medium text-white mb-4">Edit Prospect</p>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { key: 'name', label: 'Name' },
+              { key: 'position', label: 'Position' },
+              { key: 'company', label: 'Company' },
+              { key: 'email', label: 'Email' },
+              { key: 'phone', label: 'Phone' },
+              { key: 'country', label: 'Country' },
+              { key: 'status', label: 'Status', select: true, options: ['New', 'Contacted', 'Responded', 'Interested', 'Qualified', 'Meeting Scheduled', 'Follow-up Required', 'Not Interested'] },
+              { key: 'interest', label: 'Interest', select: true, options: ['Low', 'Medium', 'High', 'Very High'] },
+              { key: 'notes', label: 'Notes', textarea: true },
+            ].map((field) => (
+              <div key={field.key}>
+                <label className="text-xs text-gray-400 mb-1 block">{field.label}</label>
+                {field.select ? (
+                  <select
+                    value={(editingProspect as any)[field.key] || ''}
+                    onChange={(e) => setEditingProspect({...editingProspect, [field.key]: e.target.value})}
+                    className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm text-white outline-none"
+                  >
+                    {field.options?.map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                ) : field.textarea ? (
+                  <textarea
+                    placeholder={field.label}
+                    value={(editingProspect as any)[field.key] || ''}
+                    onChange={(e) => setEditingProspect({...editingProspect, [field.key]: e.target.value})}
+                    className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 outline-none"
+                    rows={3}
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    placeholder={field.label}
+                    value={(editingProspect as any)[field.key] || ''}
+                    onChange={(e) => setEditingProspect({...editingProspect, [field.key]: e.target.value})}
+                    className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 outline-none"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 flex gap-2">
+            <Button variant="primary" onClick={async () => {
+              try {
+                await updateProspect(editingProspect.id, editingProspect);
+                setProspects(prospects.map(p => p.id === editingProspect.id ? editingProspect : p));
+                setShowEditForm(false);
+                setEditingProspect(null);
+                setToast({ message: 'Prospect updated!', type: 'success' });
+              } catch (err: any) {
+                setToast({ message: err.message || 'Failed to update prospect', type: 'error' });
+              }
+            }}>
+              Save Changes
+            </Button>
+            <Button variant="secondary" onClick={() => {
+              setShowEditForm(false);
+              setEditingProspect(null);
+            }}>
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
+
         {/* Search and Filter */}
         <div className="flex gap-3 mb-4">
           <input
@@ -270,19 +343,29 @@ export default function ProspectsPage() {
                   <td className="px-4 py-3">
                     <input
                       type="checkbox"
-                      checked={p.emailConsent || false}
+                      checked={p.email_consent || false}
                       onChange={async () => {
-                        if (p.emailConsent) {
-                          await revokeConsent({ consent_type: 'email', prospect_id: p.id });
-                          setToast({ message: 'Email consent revoked', type: 'info' });
-                        } else {
-                          await grantConsent({ consent_type: 'email', prospect_id: p.id, source: 'manual' });
-                          setToast({ message: 'Email consent granted', type: 'success' });
-                        }
-                        // Refresh prospects to update consent status
-                        const data = await getProspects();
-                        if (!data.error && Array.isArray(data)) {
-                          setProspects(data);
+                        const previousState = p.email_consent;
+                        // Optimistically update UI
+                        setProspects(prospects.map(pr => pr.id === p.id ? { ...pr, email_consent: !previousState } : pr));
+
+                        try {
+                          if (previousState) {
+                            await revokeConsent({ consent_type: 'email', prospect_id: p.id });
+                            setToast({ message: 'Email consent revoked', type: 'info' });
+                          } else {
+                            await grantConsent({ consent_type: 'email', prospect_id: p.id, source: 'manual' });
+                            setToast({ message: 'Email consent granted', type: 'success' });
+                          }
+                          // Refresh to get actual state from backend
+                          const data = await getProspects();
+                          if (!data.error && Array.isArray(data)) {
+                            setProspects(data);
+                          }
+                        } catch (err: any) {
+                          // Rollback on error
+                          setProspects(prospects.map(pr => pr.id === p.id ? { ...pr, email_consent: previousState } : pr));
+                          setToast({ message: err.message || 'Failed to update consent', type: 'error' });
                         }
                       }}
                       className="w-4 h-4 cursor-pointer"
@@ -292,13 +375,22 @@ export default function ProspectsPage() {
                   <td className="px-4 py-3 text-gray-500">{p.nextFollowup}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
-                      <button 
+                      <button
+                        onClick={() => {
+                          setEditingProspect(p);
+                          setShowEditForm(true);
+                        }}
+                        className="text-xs text-blue-400 hover:text-blue-300"
+                      >
+                        Edit
+                      </button>
+                      <button
                         onClick={() => handleDelete(p.id)}
                         className="text-xs text-red-400 hover:text-red-300"
                       >
                         Delete
                       </button>
-                      <button 
+                      <button
                         onClick={() => {
                           setProspects(prospects.filter(pr => pr.id !== p.id));
                           setToast({ message: `${p.name} converted to lead!`, type: 'success' });
