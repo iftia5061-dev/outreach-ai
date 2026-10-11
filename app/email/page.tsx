@@ -58,7 +58,7 @@ export default function EmailPage() {
           <div>
             <p className="text-sm font-medium text-yellow-400">Incoming Emails - Coming Soon</p>
             <p className="text-xs text-yellow-300/70 mt-1">
-              This section will display received emails after IMAP or Resend inbound webhook integration.
+              Replies from prospects will appear here soon.
             </p>
           </div>
         </div>
@@ -73,17 +73,17 @@ export default function EmailPage() {
       {/* Sent Emails Table */}
       {emails.length === 0 ? (
         <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 text-center">
-          <p className="text-sm text-gray-400">এখনো কোনো ইমেইল পাঠানো হয়নি</p>
+          <p className="text-sm text-gray-400">No emails sent yet</p>
         </div>
       ) : (
         <div className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden">
           <table className="w-full">
             <thead className="bg-gray-900/50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">প্রাপক</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">বিষয়</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">তারিখ</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">স্ট্যাটাস</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Recipient</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Subject</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700">
@@ -96,15 +96,15 @@ export default function EmailPage() {
                     {email.subject}
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-400">
-                    {new Date(email.sent_at).toLocaleDateString('bn-BD')}
+                    {new Date(email.sent_at).toLocaleDateString('en-US')}
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      email.status === 'sent' 
+                      email.status === 'sent'
                         ? 'bg-green-900/30 text-green-400 border border-green-700'
                         : 'bg-red-900/30 text-red-400 border border-red-700'
                     }`}>
-                      {email.status === 'sent' ? 'পাঠানো হয়েছে' : 'ব্যর্থ'}
+                      {email.status === 'sent' ? 'Sent' : 'Failed'}
                     </span>
                   </td>
                 </tr>
