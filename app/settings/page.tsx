@@ -11,9 +11,6 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [subscription, setSubscription] = useState<any>(null);
   const [usage, setUsage] = useState({ prospects: 0, clients: 0 });
-  const [settings, setSettings] = useState({
-    timezone: 'UTC+0 (GMT)',
-  });
 
   useEffect(() => {
     fetchSubscription();
@@ -38,10 +35,6 @@ export default function SettingsPage() {
   };
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
-
-  const handleSave = () => {
-    setToast({ message: 'Settings saved successfully!', type: 'success' });
-  };
 
   if (loading) {
     return (
@@ -74,27 +67,6 @@ export default function SettingsPage() {
                 Go to AI Settings
               </Button>
             </Link>
-          </div>
-
-          {/* Timezone Settings */}
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
-            <p className="text-sm font-medium text-white mb-4">Timezone</p>
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs text-gray-400 mb-1 block">Select Timezone</label>
-                <select
-                  value={settings.timezone}
-                  onChange={(e) => setSettings({...settings, timezone: e.target.value})}
-                  className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-600 text-white"
-                >
-                  <option>UTC+0 (GMT)</option>
-                  <option>UTC+1 (Central Europe)</option>
-                  <option>UTC+2 (Eastern Europe)</option>
-                  <option>UTC-5 (Eastern Time)</option>
-                  <option>UTC-8 (Pacific Time)</option>
-                </select>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -139,15 +111,6 @@ export default function SettingsPage() {
           )}
         </div>
 
-        <div className="mt-6">
-          <Button 
-            onClick={handleSave}
-            variant="primary"
-          >
-            Save Settings
-          </Button>
-        </div>
-      
       {toast && (
         <Toast 
           message={toast.message} 
