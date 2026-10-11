@@ -138,7 +138,7 @@ export default function ProspectsPage() {
               { key: 'name', label: 'Name', placeholder: 'John Smith' },
               { key: 'position', label: 'Position', placeholder: 'Manager' },
               { key: 'company', label: 'Company', placeholder: 'Company name' },
-              { key: 'yacht', label: 'Yacht', placeholder: 'Yacht name' },
+              { key: 'yacht', label: 'Industry / Notes', placeholder: 'Industry or notes' },
               { key: 'email', label: 'Email', placeholder: 'email@example.com' },
               { key: 'phone', label: 'Phone', placeholder: '+1 234 567 8900' },
               { key: 'whatsapp', label: 'WhatsApp', placeholder: '+39 123 456 7890' },
@@ -301,7 +301,7 @@ export default function ProspectsPage() {
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Name</th>
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Position</th>
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Company</th>
-                <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Yacht</th>
+                <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Industry / Notes</th>
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Email</th>
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Phone</th>
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Country</th>

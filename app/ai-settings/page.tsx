@@ -110,7 +110,7 @@ export default function AISettingsPage() {
             <textarea
               value={settings.services}
               onChange={(e) => setSettings({ ...settings, services: e.target.value })}
-              placeholder="List your services (e.g., yacht refit, sales, maintenance)"
+              placeholder="List your services (e.g., consulting, sales, support)"
               rows={2}
               className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 outline-none focus:border-gray-600"
             />

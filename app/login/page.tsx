@@ -6,7 +6,7 @@ import { googleLoginUser } from '@/lib/api';
 import { googleSignInGetToken } from '@/lib/firebase';
 
 const cards = [
-  { icon: "✉️", title: "Email Outreach", desc: "AI sends personalized emails to captains & managers" },
+  { icon: "✉️", title: "Email Outreach", desc: "AI sends personalized emails to prospects" },
   { icon: "💬", title: "WhatsApp AI", desc: "Automated conversations that feel human" },
   { icon: "📅", title: "Meeting Booking", desc: "Auto-schedules 15-min calls with interested leads" },
   { icon: "📊", title: "Analytics", desc: "Track every prospect from contact to conversion" },
@@ -100,7 +100,7 @@ export default function LoginPage() {
         {/* Header */}
         <div className="fade-in" style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '12px', fontWeight: 600, color: '#60a5fa', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: '12px' }}>
-            AI-Powered Yacht Outreach
+            AI-Powered Outreach
           </div>
           <h1 style={{ fontSize: '52px', fontWeight: 700, color: '#ffffff', lineHeight: 1.1, marginBottom: '16px', letterSpacing: '-1px' }}>
             OutreachAI

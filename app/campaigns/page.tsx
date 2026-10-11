@@ -194,7 +194,7 @@ export default function CampaignsPage() {
               <label className="text-xs text-gray-400 mb-1 block">Campaign Name</label>
               <input 
                 type="text" 
-                placeholder="e.g. Email Campaign - France"
+                placeholder="e.g. Email Campaign - Region"
                 value={newCampaign.name}
                 onChange={(e) => setNewCampaign({...newCampaign, name: e.target.value})}
                 className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-600 text-white placeholder-gray-500" 
@@ -204,7 +204,7 @@ export default function CampaignsPage() {
               <label className="text-xs text-gray-400 mb-1 block">Target Audience</label>
               <input 
                 type="text" 
-                placeholder="e.g. Yacht owners in France"
+                placeholder="e.g. Business owners in region"
                 value={newCampaign.audience}
                 onChange={(e) => setNewCampaign({...newCampaign, audience: e.target.value})}
                 className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-600 text-white placeholder-gray-500" 
