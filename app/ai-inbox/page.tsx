@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getProspects, updateProspect, createBookingLink, aiGenerateReply } from '@/lib/api';
+import { getProspects, updateProspect, createBookingLink, aiGenerateReply, aiSendEmail } from '@/lib/api';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
@@ -36,6 +36,7 @@ export default function AIInboxPage() {
           id: p.id,
           name: p.name,
           company: p.company,
+          email: p.email,
           status: p.status,
           lastMessage: `Last contact: ${p.last_contact || 'Not yet contacted'}`,
           time: p.last_contact || 'New',
@@ -60,26 +61,49 @@ export default function AIInboxPage() {
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      const updatedConversations = conversations.map(c =>
-        c.id === selectedConversation.id
-          ? {
-              ...c,
-              messages: [
-                ...c.messages,
-                { id: c.messages.length + 1, sender: 'ai', text: newMessage, time: new Date().toLocaleTimeString() }
-              ],
-              lastMessage: newMessage,
-              time: 'Just now'
-            }
-          : c
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !selectedConversation) return;
+
+    // Check if prospect has email
+    if (!selectedConversation.email) {
+      setToast({ message: 'Prospect has no email address. Cannot send email.', type: 'error' });
+      return;
+    }
+
+    try {
+      const result = await aiSendEmail(
+        selectedConversation.email,
+        `Re: ${selectedConversation.company || 'Outreach'}`,
+        newMessage,
+        selectedConversation.id
       );
-      setConversations(updatedConversations);
-      setSelectedConversation(updatedConversations.find(c => c.id === selectedConversation.id)!);
-      setNewMessage('');
-      setAiSuggestion('');
-      setToast({ message: 'Message sent successfully', type: 'success' });
+
+      if (result.error) {
+        setToast({ message: result.error, type: 'error' });
+      } else {
+        // Update local state to show message was sent
+        const updatedConversations = conversations.map(c =>
+          c.id === selectedConversation.id
+            ? {
+                ...c,
+                messages: [
+                  ...c.messages,
+                  { id: c.messages.length + 1, sender: 'ai', text: newMessage, time: new Date().toLocaleTimeString() }
+                ],
+                lastMessage: newMessage,
+                time: 'Just now'
+              }
+            : c
+        );
+        setConversations(updatedConversations);
+        setSelectedConversation(updatedConversations.find(c => c.id === selectedConversation.id)!);
+        setNewMessage('');
+        setAiSuggestion('');
+        setToast({ message: 'Email sent successfully', type: 'success' });
+      }
+    } catch (error: any) {
+      console.error('Send email error:', error);
+      setToast({ message: error.message || 'Failed to send email', type: 'error' });
     }
   };
 
@@ -316,11 +340,13 @@ export default function AIInboxPage() {
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                className="flex-1 border border-gray-600 bg-gray-900 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-500 text-white placeholder-gray-500"
+                disabled={!selectedConversation?.email}
+                className="flex-1 border border-gray-600 bg-gray-900 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-500 text-white placeholder-gray-500 disabled:opacity-50"
               />
               <Button
                 onClick={handleSendMessage}
                 variant="primary"
+                disabled={!selectedConversation?.email || !newMessage.trim()}
               >
                 Send
               </Button>

@@ -262,6 +262,17 @@ export const aiChat = async (message: string, prospect?: any, companyInfo?: stri
   return safeJsonParse(res);
 };
 
+// AI Send Email
+export const aiSendEmail = async (to: string, subject: string, body: string, prospectId?: number) => {
+  const res = await fetch(`${API_URL}/ai/send-email`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ to, subject, body, prospect_id: prospectId }),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
 // AI Generate Reply
 export const aiGenerateReply = async (conversationHistory: string, companyInfo: string, prospectName?: string, senderName?: string) => {
   const res = await fetch(`${API_URL}/ai/generate-reply`, {
