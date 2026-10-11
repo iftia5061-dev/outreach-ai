@@ -132,7 +132,7 @@ export default function AnalyticsPage() {
                     const maxCount = Math.max(...data.dailyProspects.map((d: any) => d.count));
                     const isToday = index === data.dailyProspects.length - 1;
                     const barHeight = item.count > 0
-                      ? Math.max((item.count / maxCount) * 100, 15)
+                      ? Math.max((item.count / maxCount) * 160, 8)
                       : 2;
                     const date = new Date(item.date);
                     const dateLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -147,10 +147,10 @@ export default function AnalyticsPage() {
                             item.count > 0
                               ? isToday
                                 ? 'bg-blue-400 hover:bg-blue-300'
-                                : 'bg-blue-500/50 hover:bg-blue-500'
+                                : 'bg-blue-500 hover:bg-blue-400'
                               : 'bg-gray-600'
                           }`}
-                          style={{ height: `${barHeight}%` }}
+                          style={{ height: `${barHeight}px` }}
                         />
                         {showLabel && (
                           <span className="text-[10px] text-gray-500 whitespace-nowrap">{dateLabel}</span>
@@ -179,7 +179,7 @@ export default function AnalyticsPage() {
                     const maxCount = Math.max(...data.dailyEmails.map((d: any) => d.count));
                     const isToday = index === data.dailyEmails.length - 1;
                     const barHeight = item.count > 0
-                      ? Math.max((item.count / maxCount) * 100, 15)
+                      ? Math.max((item.count / maxCount) * 160, 8)
                       : 2;
                     const date = new Date(item.date);
                     const dateLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -194,10 +194,10 @@ export default function AnalyticsPage() {
                             item.count > 0
                               ? isToday
                                 ? 'bg-green-400 hover:bg-green-300'
-                                : 'bg-green-500/50 hover:bg-green-500'
+                                : 'bg-green-500 hover:bg-green-400'
                               : 'bg-gray-600'
                           }`}
-                          style={{ height: `${barHeight}%` }}
+                          style={{ height: `${barHeight}px` }}
                         />
                         {showLabel && (
                           <span className="text-[10px] text-gray-500 whitespace-nowrap">{dateLabel}</span>
