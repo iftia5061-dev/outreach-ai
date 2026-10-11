@@ -162,17 +162,6 @@ export default function ProspectsPage() {
               />
               <span className="text-sm text-gray-400">Email consent granted</span>
             </div>
-              <div key={field.key}>
-                <label className="text-xs text-gray-400 mb-1 block">{field.label}</label>
-                <input
-                  type="text"
-                  placeholder={field.placeholder}
-                  value={(newProspect as any)[field.key]}
-                  onChange={(e) => setNewProspect({...newProspect, [field.key]: e.target.value})}
-                  className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 outline-none"
-                />
-              </div>
-            ))}
           </div>
           <div className="mt-4 flex gap-2">
             <Button variant="primary" onClick={async () => {
