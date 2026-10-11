@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getProspects, updateProspect, createBookingLink } from '@/lib/api';
+import { getProspects, updateProspect, createBookingLink, aiGenerateReply } from '@/lib/api';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
@@ -13,12 +13,14 @@ export default function AIInboxPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [newMessage, setNewMessage] = useState('');
+  const [aiSuggestion, setAiSuggestion] = useState('');
+  const [generatingSuggestion, setGeneratingSuggestion] = useState(false);
 
   useEffect(() => {
     const fetchConversations = async () => {
       try {
         const prospects = await getProspects();
-        
+
         // Handle error case
         if (prospects.error) {
           console.error('API error:', prospects.error);
@@ -26,10 +28,10 @@ export default function AIInboxPage() {
           setLoading(false);
           return;
         }
-        
+
         // Ensure prospects is an array
         const prospectsArray = Array.isArray(prospects) ? prospects : [];
-        
+
         const convs = prospectsArray.map((p: any) => ({
           id: p.id,
           name: p.name,
@@ -76,7 +78,34 @@ export default function AIInboxPage() {
       setConversations(updatedConversations);
       setSelectedConversation(updatedConversations.find(c => c.id === selectedConversation.id)!);
       setNewMessage('');
+      setAiSuggestion('');
       setToast({ message: 'Message sent successfully', type: 'success' });
+    }
+  };
+
+  const handleGenerateSuggestion = async () => {
+    if (!selectedConversation) return;
+
+    setGeneratingSuggestion(true);
+    try {
+      const conversationHistory = selectedConversation.messages
+        .map((m: any) => `${m.sender}: ${m.text}`)
+        .join('\n');
+
+      const companyInfo = 'Aegean Yacht Group - Yacht refit services in Greece, Malta, Italy, France and Libya';
+
+      const response = await aiGenerateReply(conversationHistory, companyInfo);
+
+      if (response.error) {
+        setToast({ message: response.error, type: 'error' });
+      } else {
+        setAiSuggestion(response.reply);
+      }
+    } catch (error: any) {
+      console.error('AI generate reply error:', error);
+      setToast({ message: error.message || 'Failed to generate AI suggestion', type: 'error' });
+    } finally {
+      setGeneratingSuggestion(false);
     }
   };
 
@@ -121,9 +150,12 @@ export default function AIInboxPage() {
           </div>
           <div className="flex-1 overflow-y-auto">
             {filteredConversations.map((c) => (
-              <div 
-                key={c.id} 
-                onClick={() => setSelectedConversation(c)}
+              <div
+                key={c.id}
+                onClick={() => {
+                  setSelectedConversation(c);
+                  setAiSuggestion('');
+                }}
                 className={`flex items-center gap-3 px-4 py-3 border-b border-gray-700 hover:bg-gray-700 cursor-pointer ${selectedConversation?.id === c.id ? 'bg-gray-700' : ''}`}
               >
                 <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-gray-300 font-medium text-sm flex-shrink-0">
@@ -223,28 +255,50 @@ export default function AIInboxPage() {
           {/* AI Suggestion */}
           <div className="p-4 border-t border-gray-700 bg-gray-800">
             <div className="mb-3">
-              <p className="text-xs text-gray-400 mb-2">AI Suggested Response:</p>
-              <div className="bg-gray-900 border border-gray-700 rounded-lg p-3">
-                <p className="text-sm text-gray-300">Excellent! I'd love to schedule a 15-minute call to discuss your specific requirements. Would tomorrow at 10 AM work for you?</p>
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-xs text-gray-400">AI Suggested Response:</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleGenerateSuggestion}
+                  disabled={generatingSuggestion || !selectedConversation}
+                >
+                  {generatingSuggestion ? 'Generating...' : 'Generate'}
+                </Button>
               </div>
+              {aiSuggestion ? (
+                <div className="bg-gray-900 border border-gray-700 rounded-lg p-3">
+                  <p className="text-sm text-gray-300">{aiSuggestion}</p>
+                </div>
+              ) : (
+                <div className="bg-gray-900 border border-gray-700 rounded-lg p-3">
+                  <p className="text-xs text-gray-500">Click "Generate" to get AI suggestion based on conversation history</p>
+                </div>
+              )}
             </div>
             <div className="flex gap-2 mb-2">
-              <Button 
+              <Button
                 variant="primary"
                 size="sm"
                 onClick={() => {
-                  setNewMessage("Excellent! I'd love to schedule a 15-minute call to discuss your specific requirements. Would tomorrow at 10 AM work for you?");
-                  handleSendMessage();
+                  if (aiSuggestion) {
+                    setNewMessage(aiSuggestion);
+                    handleSendMessage();
+                  }
                 }}
+                disabled={!aiSuggestion}
               >
                 Approve & Send
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  setNewMessage("Excellent! I'd love to schedule a 15-minute call to discuss your specific requirements. Would tomorrow at 10 AM work for you?");
+                  if (aiSuggestion) {
+                    setNewMessage(aiSuggestion);
+                  }
                 }}
+                disabled={!aiSuggestion}
               >
                 Edit
               </Button>
@@ -258,7 +312,7 @@ export default function AIInboxPage() {
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                 className="flex-1 border border-gray-600 bg-gray-900 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-500 text-white placeholder-gray-500"
               />
-              <Button 
+              <Button
                 onClick={handleSendMessage}
                 variant="primary"
               >
@@ -268,10 +322,10 @@ export default function AIInboxPage() {
           </div>
 
           {toast && (
-            <Toast 
-              message={toast.message} 
-              type={toast.type} 
-              onClose={() => setToast(null)} 
+            <Toast
+              message={toast.message}
+              type={toast.type}
+              onClose={() => setToast(null)}
             />
           )}
         </div>

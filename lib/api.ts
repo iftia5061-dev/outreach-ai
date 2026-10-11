@@ -250,6 +250,29 @@ export const createBookingLink = async (data: any) => {
   });
   return safeJsonParse(res);
 };
+
+// AI Chat
+export const aiChat = async (message: string, prospect?: any) => {
+  const res = await fetch(`${API_URL}/ai/chat`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ message, prospect }),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
+// AI Generate Reply
+export const aiGenerateReply = async (conversationHistory: string, companyInfo: string) => {
+  const res = await fetch(`${API_URL}/ai/generate-reply`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ conversation_history: conversationHistory, company_info: companyInfo }),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
 export const googleLoginUser = async (idToken: string) => {
   const res = await fetch(`${API_URL}/auth/google`, {
     method: 'POST',
