@@ -135,12 +135,12 @@ export default function ProspectsPage() {
           <p className="text-sm font-medium text-white mb-4">Add New Prospect</p>
           <div className="grid grid-cols-3 gap-3">
             {[
-              { key: 'name', label: 'Name', placeholder: 'Capt. Marco Bellini' },
-              { key: 'position', label: 'Position', placeholder: 'Captain' },
-              { key: 'company', label: 'Company', placeholder: 'MV Serenity' },
-              { key: 'yacht', label: 'Yacht', placeholder: 'MV Serenity' },
+              { key: 'name', label: 'Name', placeholder: 'John Smith' },
+              { key: 'position', label: 'Position', placeholder: 'Manager' },
+              { key: 'company', label: 'Company', placeholder: 'Company name' },
+              { key: 'yacht', label: 'Yacht', placeholder: 'Yacht name' },
               { key: 'email', label: 'Email', placeholder: 'email@example.com' },
-              { key: 'phone', label: 'Phone', placeholder: '+39 123 456 7890' },
+              { key: 'phone', label: 'Phone', placeholder: '+1 234 567 8900' },
               { key: 'whatsapp', label: 'WhatsApp', placeholder: '+39 123 456 7890' },
               { key: 'country', label: 'Country', placeholder: 'Italy' },
             ].map((field) => (

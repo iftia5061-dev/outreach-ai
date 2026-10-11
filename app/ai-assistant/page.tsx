@@ -114,7 +114,7 @@ export default function AIAssistantPage() {
           {selectedProspect && (
             <div className="mt-4 p-3 bg-gray-900 border border-gray-700 rounded-lg">
               <p className="text-xs text-gray-400 mb-1">Selected: {selectedProspect.name}</p>
-              <p className="text-xs text-gray-400">{selectedProspect.company} · {selectedProspect.yacht}</p>
+              <p className="text-xs text-gray-400">{selectedProspect.company}</p>
             </div>
           )}
         </div>
