@@ -58,8 +58,9 @@ export default function CalendarPage() {
   }
 
   const statusColor: Record<string, string> = {
-    Confirmed: "bg-gray-700 text-gray-300",
-    Pending: "bg-gray-700 text-gray-300",
+    Upcoming: "bg-blue-600 text-white",
+    Completed: "bg-green-600 text-white",
+    Cancelled: "bg-red-600 text-white",
   };
 
   return (
@@ -80,11 +81,11 @@ export default function CalendarPage() {
       {/* Upcoming Meetings */}
       <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
         <p className="text-sm font-medium text-white mb-3">Upcoming Meetings</p>
-        {meetings.length === 0 ? (
+        {Array.isArray(meetings) && meetings.length === 0 ? (
           <p className="text-sm text-gray-400">No meetings scheduled</p>
         ) : (
           <div className="space-y-3">
-            {meetings.map((m) => (
+            {Array.isArray(meetings) && meetings.filter(m => (m.status ?? '').toString() === 'Upcoming').map((m) => (
               <div key={m.id} className="border border-gray-700 rounded-lg p-3 hover:bg-gray-700 cursor-pointer relative">
                 <div className="flex justify-between items-start mb-2">
                   <div>
@@ -92,8 +93,8 @@ export default function CalendarPage() {
                     <p className="text-xs text-gray-400">{m.company}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusColor[m.status]}`}>
-                      {m.status}
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusColor[(m.status ?? '').toString()]}`}>
+                      {(m.status ?? '').toString()}
                     </span>
                     <button
                       onClick={() => handleDeleteMeeting(m.id)}

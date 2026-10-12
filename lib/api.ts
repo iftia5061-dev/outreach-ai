@@ -153,6 +153,16 @@ export const createMeeting = async (data: any) => {
   return safeJsonParse(res);
 };
 
+export const updateMeeting = async (id: number, data: any) => {
+  const res = await fetch(`${API_URL}/meetings/${id}`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
 export const deleteMeeting = async (id: number) => {
   const res = await fetch(`${API_URL}/meetings/${id}`, {
     method: 'DELETE',
