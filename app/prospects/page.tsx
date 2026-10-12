@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getProspects, createProspect, deleteProspect, updateProspect, grantConsent, revokeConsent } from '@/lib/api';
+import { useRouter } from 'next/navigation';
+import { getProspects, createProspect, deleteProspect, updateProspect, grantConsent, revokeConsent, createLead } from '@/lib/api';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
 
 export default function ProspectsPage() {
+  const router = useRouter();
   const [prospects, setProspects] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
@@ -405,9 +407,29 @@ export default function ProspectsPage() {
                         Delete
                       </button>
                       <button
-                        onClick={() => {
-                          setProspects(prospects.filter(pr => pr.id !== p.id));
-                          setToast({ message: `${p.name} converted to lead!`, type: 'success' });
+                        onClick={async () => {
+                          try {
+                            const data = await createLead({
+                              name: p.name,
+                              company: p.company,
+                              status: 'New',
+                              value: 0,
+                              source: 'prospects',
+                              prospect_id: p.id,
+                            });
+                            if (data.error) {
+                              setToast({ message: data.error, type: 'error' });
+                            } else {
+                              setToast({ message: `${p.name} converted to lead!`, type: 'success' });
+                              // Remove from prospects list
+                              setProspects(prospects.filter(pr => pr.id !== p.id));
+                              // Redirect to Leads page
+                              router.push('/leads');
+                            }
+                          } catch (error: any) {
+                            console.error('Convert to lead error:', error);
+                            setToast({ message: error.message || 'Failed to convert to lead', type: 'error' });
+                          }
                         }}
                         className="text-xs text-green-400 hover:text-green-300"
                       >
