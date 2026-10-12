@@ -11,6 +11,16 @@ const safeJsonParse = async (res: Response) => {
     return { error: 'Session expired, please log in again' };
   }
 
+  // Handle 429 Too Many Requests - no retry
+  if (res.status === 429) {
+    const contentType = res.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const data = await res.json();
+      return { error: data.error || 'Too many requests, please wait' };
+    }
+    return { error: 'Too many requests, please wait' };
+  }
+
   const contentType = res.headers.get('content-type');
   if (contentType && contentType.includes('application/json')) {
     return res.json();

@@ -56,7 +56,7 @@ export default function DashboardPage() {
       }
     };
     fetchStats();
-  }, [router]);
+  }, []);
 
   if (loading) {
     return (
