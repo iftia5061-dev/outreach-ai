@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getProspects, updateProspect, createBookingLink, aiGenerateReply, aiSendEmail, grantConsent } from '@/lib/api';
+import { getProspects, updateProspect, createBookingLink, aiGenerateReply, aiSendEmail, grantConsent, getSentEmails } from '@/lib/api';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
@@ -12,6 +12,7 @@ export default function AIInboxPage() {
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadingMessages, setLoadingMessages] = useState(false);
   const [newMessage, setNewMessage] = useState('');
   const [aiSuggestion, setAiSuggestion] = useState('');
   const [generatingSuggestion, setGeneratingSuggestion] = useState(false);
@@ -32,17 +33,30 @@ export default function AIInboxPage() {
         // Ensure prospects is an array
         const prospectsArray = Array.isArray(prospects) ? prospects : [];
 
-        const convs = prospectsArray.map((p: any) => ({
-          id: p.id,
-          name: p.name,
-          company: p.company,
-          email: p.email,
-          status: p.status,
-          lastMessage: `Last contact: ${p.last_contact || 'Not yet contacted'}`,
-          time: p.last_contact || 'New',
-          unread: p.status === 'Responded',
-          messages: [],
-        }));
+        // Get all sent emails to populate last contact info
+        const sentEmailsData = await getSentEmails();
+        const sentEmails = sentEmailsData.emails || [];
+
+        const convs = prospectsArray.map((p: any) => {
+          // Find last email for this prospect
+          const lastEmail = sentEmails
+            .filter((e: any) => e.prospect_id === p.id)
+            .sort((a: any, b: any) => new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime())[0];
+
+          return {
+            id: p.id,
+            name: p.name,
+            company: p.company,
+            email: p.email,
+            status: p.status,
+            lastMessage: lastEmail
+              ? (lastEmail.body || '').toString().substring(0, 50) + (lastEmail.body.length > 50 ? '...' : '')
+              : 'No messages yet',
+            time: lastEmail ? new Date(lastEmail.sent_at).toLocaleDateString() : 'New',
+            unread: p.status === 'Responded',
+            messages: [],
+          };
+        });
         setConversations(convs);
       } catch (error) {
         console.error('Failed to fetch conversations:', error);
@@ -53,6 +67,45 @@ export default function AIInboxPage() {
     };
     fetchConversations();
   }, []);
+
+  // Load email history when a conversation is selected
+  useEffect(() => {
+    if (!selectedConversation) return;
+
+    const loadEmailHistory = async () => {
+      setLoadingMessages(true);
+      try {
+        const sentEmailsData = await getSentEmails(selectedConversation.id);
+        const sentEmails = sentEmailsData.emails || [];
+
+        // Convert sent emails to message format
+        const messages = sentEmails.map((email: any) => ({
+          id: email.id,
+          sender: 'user',
+          text: email.body || '',
+          time: new Date(email.sent_at).toLocaleTimeString(),
+          date: new Date(email.sent_at).toLocaleDateString(),
+          status: email.status || 'sent',
+          direction: email.direction || 'sent',
+        }));
+
+        setConversations((prev: any[]) =>
+          prev.map((c: any) =>
+            c.id === selectedConversation.id
+              ? { ...c, messages }
+              : c
+          )
+        );
+        setSelectedConversation((prev: any) => prev ? { ...prev, messages } : null);
+      } catch (error) {
+        console.error('Failed to load email history:', error);
+      } finally {
+        setLoadingMessages(false);
+      }
+    };
+
+    loadEmailHistory();
+  }, [selectedConversation?.id]);
 
   const filteredConversations = conversations.filter(c =>
     (c.name ?? '').toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -89,22 +142,29 @@ export default function AIInboxPage() {
           setToast({ message: result.error, type: 'error' });
         }
       } else {
-        // Update local state to show message was sent
+        // Add new message to conversation
+        const newMessageObj = {
+          id: Date.now(),
+          sender: 'user',
+          text: newMessage,
+          time: new Date().toLocaleTimeString(),
+          date: new Date().toLocaleDateString(),
+          status: 'sent',
+          direction: 'sent',
+        };
+
         const updatedConversations = conversations.map(c =>
           c.id === selectedConversation.id
             ? {
                 ...c,
-                messages: [
-                  ...c.messages,
-                  { id: c.messages.length + 1, sender: 'ai', text: newMessage, time: new Date().toLocaleTimeString() }
-                ],
-                lastMessage: newMessage,
+                messages: [...c.messages, newMessageObj],
+                lastMessage: newMessage.substring(0, 50) + (newMessage.length > 50 ? '...' : ''),
                 time: 'Just now'
               }
             : c
         );
         setConversations(updatedConversations);
-        setSelectedConversation(updatedConversations.find(c => c.id === selectedConversation.id)!);
+        setSelectedConversation((prev: any) => prev ? { ...prev, messages: [...prev.messages, newMessageObj] } : null);
         setNewMessage('');
         setAiSuggestion('');
         setToast({ message: 'Email sent successfully', type: 'success' });
@@ -290,16 +350,33 @@ export default function AIInboxPage() {
 
           {/* Messages */}
           <div className="flex-1 p-4 overflow-y-auto bg-gray-800">
-            <div className="space-y-4">
-              {selectedConversation?.messages?.map((msg: any) => (
-                <div key={msg.id} className={`flex ${msg.sender === 'ai' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`${msg.sender === 'ai' ? 'bg-gray-700' : 'bg-blue-600'} text-white rounded-lg px-4 py-2 max-w-md`}>
-                    <p className="text-sm">{msg.text}</p>
-                    <p className={`text-xs mt-1 ${msg.sender === 'ai' ? 'text-gray-300' : 'text-blue-200'}`}>{msg.time}</p>
+            {loadingMessages ? (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-sm text-gray-400">Loading messages...</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {selectedConversation?.messages?.length === 0 ? (
+                  <div className="flex items-center justify-center h-full">
+                    <p className="text-sm text-gray-400">No messages yet</p>
                   </div>
-                </div>
-              ))}
-            </div>
+                ) : (
+                  selectedConversation?.messages?.map((msg: any) => (
+                    <div key={msg.id} className={`flex ${msg.direction === 'sent' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`${msg.direction === 'sent' ? 'bg-gray-700' : 'bg-blue-600'} text-white rounded-lg px-4 py-2 max-w-md relative`}>
+                        <p className="text-sm">{msg.text}</p>
+                        <div className="flex justify-between items-center mt-1">
+                          <p className={`text-xs ${msg.direction === 'sent' ? 'text-gray-300' : 'text-blue-200'}`}>{msg.time}</p>
+                          {msg.status === 'failed' && (
+                            <span className="text-xs text-red-400 ml-2">Failed</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
 
           {/* AI Suggestion */}

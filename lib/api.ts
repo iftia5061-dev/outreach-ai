@@ -331,8 +331,11 @@ export const googleLoginUser = async (idToken: string) => {
 };
 
 // Sent Emails
-export const getSentEmails = async () => {
-  const res = await fetch(`${API_URL}/email/sent`, {
+export const getSentEmails = async (prospectId?: number) => {
+  const url = prospectId
+    ? `${API_URL}/email/sent?prospect_id=${prospectId}`
+    : `${API_URL}/email/sent`;
+  const res = await fetch(url, {
     headers: getAuthHeaders(),
     credentials: 'include',
   });
