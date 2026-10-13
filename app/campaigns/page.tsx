@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getCampaigns, createCampaign } from '@/lib/api';
+import { getCampaigns, createCampaign, updateCampaign, deleteCampaign } from '@/lib/api';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
 
 export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [stats, setStats] = useState({ total: 0, active: 0, sent: 0, reply: 0 });
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
@@ -28,6 +29,14 @@ export default function CampaignsPage() {
           setCampaigns([]);
         } else {
           setCampaigns(Array.isArray(data) ? data : []);
+          // Calculate stats from campaigns data
+          const campaignList = Array.isArray(data) ? data : [];
+          setStats({
+            total: campaignList.length,
+            active: campaignList.filter((c: any) => c.status === 'Active').length,
+            sent: campaignList.reduce((sum: number, c: any) => sum + (c.sent || 0), 0),
+            reply: campaignList.reduce((sum: number, c: any) => sum + (c.reply || 0), 0),
+          });
         }
       } catch (error) {
         console.error('Failed to fetch campaigns:', error);
@@ -60,24 +69,45 @@ export default function CampaignsPage() {
       status: 'Active',
       message: newCampaign.message,
     });
-    setCampaigns(Array.isArray(campaigns) ? [...campaigns, campaign] : [campaign]);
-    setShowCreateForm(false);
-    setNewCampaign({ name: '', audience: '', channel: 'Email', message: '' });
-    setToast({ message: 'Campaign created successfully!', type: 'success' });
+
+    if (campaign.error) {
+      setToast({ message: campaign.error, type: 'error' });
+    } else {
+      setCampaigns([...campaigns, campaign]);
+      setShowCreateForm(false);
+      setNewCampaign({ name: '', audience: '', channel: 'Email', message: '' });
+      setToast({ message: 'Campaign created successfully!', type: 'success' });
+    }
   };
 
-  const handleToggleStatus = (id: number) => {
-    setCampaigns(Array.isArray(campaigns) ? campaigns.map(c => 
-      c.id === id 
-        ? { ...c, status: c.status === 'Active' ? 'Paused' : 'Active' }
-        : c
-    ) : []);
-    setToast({ message: 'Campaign status updated', type: 'success' });
+  const handleToggleStatus = async (id: number) => {
+    const campaign = campaigns.find(c => c.id === id);
+    if (!campaign) return;
+
+    const newStatus = campaign.status === 'Active' ? 'Paused' : 'Active';
+    const data = await updateCampaign(id, { status: newStatus });
+    
+    if (data.error) {
+      setToast({ message: data.error, type: 'error' });
+    } else {
+      setCampaigns(campaigns.map(c => 
+        c.id === id ? { ...c, status: newStatus } : c
+      ));
+      setToast({ message: 'Campaign status updated', type: 'success' });
+    }
   };
 
-  const handleDelete = (id: number) => {
-    setCampaigns(Array.isArray(campaigns) ? campaigns.filter(c => c.id !== id) : []);
-    setToast({ message: 'Campaign deleted', type: 'success' });
+  const handleDelete = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this campaign?')) return;
+    
+    const data = await deleteCampaign(id);
+    
+    if (data.error) {
+      setToast({ message: data.error, type: 'error' });
+    } else {
+      setCampaigns(campaigns.filter(c => c.id !== id));
+      setToast({ message: 'Campaign deleted', type: 'success' });
+    }
   };
 
   if (loading) {
@@ -114,10 +144,10 @@ export default function CampaignsPage() {
         {/* Campaign Stats */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Total Campaigns", value: "3" },
-            { label: "Active Campaigns", value: "2" },
-            { label: "Total Sent", value: "232" },
-            { label: "Total Replies", value: "57" },
+            { label: "Total Campaigns", value: stats.total.toString() },
+            { label: "Active Campaigns", value: stats.active.toString() },
+            { label: "Total Sent", value: stats.sent.toString() },
+            { label: "Total Replies", value: stats.reply.toString() },
           ].map((s) => (
             <div key={s.label} className="bg-gray-800 border border-gray-700 rounded-xl p-4">
               <p className="text-xs text-gray-400 mb-1">{s.label}</p>
@@ -135,10 +165,6 @@ export default function CampaignsPage() {
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Target Audience</th>
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Channel</th>
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Status</th>
-                <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Sent</th>
-                <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Open</th>
-                <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Reply</th>
-                <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Conversion</th>
                 <th className="text-left px-4 py-3 text-xs text-gray-400 font-medium">Actions</th>
               </tr>
             </thead>
@@ -153,10 +179,6 @@ export default function CampaignsPage() {
                       {c.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-400">{c.sent}</td>
-                  <td className="px-4 py-3 text-gray-400">{c.open}</td>
-                  <td className="px-4 py-3 text-gray-400">{c.reply}</td>
-                  <td className="px-4 py-3 text-gray-400">{c.conversion}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <button 
@@ -177,7 +199,7 @@ export default function CampaignsPage() {
               ))}
               {!Array.isArray(campaigns) || campaigns.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="px-4 py-8 text-center text-gray-400">
+                  <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
                     No campaigns found
                   </td>
                 </tr>

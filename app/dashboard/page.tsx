@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getProspects, getLeads, getMeetings, runAutoOutreach } from '@/lib/api';
+import { getProspects, getLeads, getMeetings } from '@/lib/api';
 import Toast from '@/components/Toast';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
@@ -77,20 +77,6 @@ export default function DashboardPage() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-base font-semibold text-white">Dashboard</h2>
         <div className="flex gap-2">
-          <Button variant="primary" onClick={async () => {
-            try {
-              const data = await runAutoOutreach();
-              if (data.error) {
-                setToast({ message: data.error, type: 'error' });
-              } else {
-                setToast({ message: data.message, type: 'success' });
-              }
-            } catch (error) {
-              setToast({ message: 'Outreach failed', type: 'error' });
-            }
-          }}>
-            🚀 Run Auto Outreach
-          </Button>
           <Button variant="outline" onClick={() => window.location.href = '/prospects'}>
             + Add Prospect
           </Button>

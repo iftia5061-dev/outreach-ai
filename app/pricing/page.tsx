@@ -29,14 +29,14 @@ const STATIC_PLANS: Record<string, Plan> = {
     name: 'Monthly',
     price_monthly: 99,
     price_yearly: 990,
-    features: ['Unlimited prospects', 'Email + WhatsApp', 'AI assistant', 'Meeting booking'],
+    features: ['Unlimited prospects', 'Email outreach', 'WhatsApp (Coming soon)', 'AI assistant', 'Meeting booking'],
     limits: { clients: 5, prospects: Infinity, channels: ['email', 'whatsapp'] },
   },
   yearly: {
     name: 'Yearly',
     price_monthly: 74,
     price_yearly: 890,
-    features: ['Unlimited prospects', 'Email + WhatsApp + LinkedIn', 'AI assistant', 'Telephone AI'],
+    features: ['Unlimited prospects', 'Email outreach', 'WhatsApp (Coming soon)', 'LinkedIn (Coming soon)', 'AI assistant', 'Telephone AI (Coming soon)', 'Knowledge Base (Coming soon)'],
     limits: { clients: Infinity, prospects: Infinity, channels: ['email', 'whatsapp', 'linkedin', 'telephone'] },
   },
 };

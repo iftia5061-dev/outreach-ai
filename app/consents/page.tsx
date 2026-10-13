@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getUserConsents, grantConsent, revokeConsent } from '@/lib/api';
+import { getConsents, grantConsent, revokeConsent } from '@/lib/api';
 
 export default function ConsentsPage() {
   const [consents, setConsents] = useState<any[]>([]);
@@ -10,7 +10,7 @@ export default function ConsentsPage() {
   useEffect(() => {
     const fetchConsents = async () => {
       try {
-        const data = await getUserConsents();
+        const data = await getConsents();
         setConsents(data.consents || []);
       } catch (error) {
         console.error('Failed to fetch consents:', error);
@@ -24,7 +24,7 @@ export default function ConsentsPage() {
   const handleGrantConsent = async (consentType: string) => {
     try {
       await grantConsent({ consent_type: consentType, source: 'settings' });
-      const data = await getUserConsents();
+      const data = await getConsents();
       setConsents(data.consents || []);
     } catch (error) {
       console.error('Failed to grant consent:', error);
@@ -34,7 +34,7 @@ export default function ConsentsPage() {
   const handleRevokeConsent = async (consentType: string) => {
     try {
       await revokeConsent({ consent_type: consentType });
-      const data = await getUserConsents();
+      const data = await getConsents();
       setConsents(data.consents || []);
     } catch (error) {
       console.error('Failed to revoke consent:', error);
