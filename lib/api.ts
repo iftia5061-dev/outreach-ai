@@ -1,10 +1,16 @@
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api`;
+
 // Helper to safely parse JSON response
-const safeJsonParse = async (res: Response) => {
-  // Handle 401 Unauthorized
-  if (res.status === 401) {
-    localStorage.removeItem('token');
+const safeJsonParse = async (res: Response, skipAuthHandling: boolean = false) => {
+  // Handle 401 Unauthorized - only for protected requests
+  if (res.status === 401 && !skipAuthHandling) {
+    // Avoid redirect loop if already on login or pricing page
     if (typeof window !== 'undefined') {
-      window.location.href = '/login?expired=true';
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/login' && currentPath !== '/pricing') {
+        localStorage.removeItem('token');
+        window.location.href = '/login?expired=true';
+      }
     }
     return { error: 'Session expired, please log in again' };
   }
@@ -35,52 +41,56 @@ const safeJsonParse = async (res: Response) => {
 // Helper to get auth headers
 const getAuthHeaders = () => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-  return {
-    'Authorization': `Bearer ${token}`,
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  return headers;
 };
 
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api`;
-
 // Auth
-export const login = async (email: string, password: string) => {
+export const loginUser = async (email: string, password: string) => {
   const res = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
-    credentials: 'include',
+    credentials: 'include', // Important for cookies
   });
-  return safeJsonParse(res);
+  return safeJsonParse(res, true); // Skip auth handling for login
 };
 
-export const register = async (email: string, password: string, name: string) => {
+export const registerUser = async (name: string, email: string, password: string) => {
   const res = await fetch(`${API_URL}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, name }),
-    credentials: 'include',
+    body: JSON.stringify({ name, email, password }),
+    credentials: 'include', // Important for cookies
   });
-  return safeJsonParse(res);
+  return safeJsonParse(res, true); // Skip auth handling for register
 };
 
-export const logout = async () => {
+export const logoutUser = async () => {
   const res = await fetch(`${API_URL}/auth/logout`, {
     method: 'POST',
-    headers: getAuthHeaders(),
-    credentials: 'include',
+    credentials: 'include', // Important for cookies
   });
-  return safeJsonParse(res);
+  return safeJsonParse(res, true); // Skip auth handling for logout
 };
 
 export const googleLoginUser = async (idToken: string) => {
   const res = await fetch(`${API_URL}/auth/google`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ idToken }),
     credentials: 'include',
+    body: JSON.stringify({ idToken }),
   });
-  return safeJsonParse(res);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Google login failed');
+  return data;
 };
 
 // Prospects
@@ -237,7 +247,7 @@ export const deleteCampaign = async (id: number) => {
 };
 
 // Consent
-export const getConsents = async () => {
+export const getUserConsents = async () => {
   const res = await fetch(`${API_URL}/consents`, {
     headers: getAuthHeaders(),
     credentials: 'include',
@@ -245,9 +255,30 @@ export const getConsents = async () => {
   return safeJsonParse(res);
 };
 
+export const checkConsent = async (consentType: string, prospectId?: number) => {
+  const params = new URLSearchParams({ consent_type: consentType });
+  if (prospectId) params.append('prospect_id', prospectId.toString());
+  
+  const res = await fetch(`${API_URL}/consents/check?${params}`, {
+    headers: getAuthHeaders(),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
 // Outreach
+export const runAutoOutreach = async () => {
+  const res = await fetch(`${API_URL}/outreach/run`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
+// Meeting Booking
 export const createBookingLink = async (data: any) => {
-  const res = await fetch(`${API_URL}/outreach/booking-link`, {
+  const res = await fetch(`${API_URL}/booking/create-link`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify(data),
@@ -257,6 +288,17 @@ export const createBookingLink = async (data: any) => {
 };
 
 // AI Chat
+export const aiChat = async (message: string, prospect?: any, companyInfo?: string) => {
+  const res = await fetch(`${API_URL}/ai/chat`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ message, prospect, company_info: companyInfo }),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
+// AI Generate Email
 export const aiGenerateEmail = async (data: any) => {
   const res = await fetch(`${API_URL}/ai/generate-email`, {
     method: 'POST',
@@ -267,31 +309,28 @@ export const aiGenerateEmail = async (data: any) => {
   return safeJsonParse(res);
 };
 
-export const aiGenerateReply = async (conversation_history: string, company_info: string, prospect_name: string, sender_name: string) => {
+// AI Generate Reply
+export const aiGenerateReply = async (conversationHistory: string, companyInfo: string, prospectName?: string, senderName?: string) => {
   const res = await fetch(`${API_URL}/ai/generate-reply`, {
     method: 'POST',
     headers: getAuthHeaders(),
-    body: JSON.stringify({ conversation_history, company_info, prospect_name, sender_name }),
+    body: JSON.stringify({
+      conversation_history: conversationHistory,
+      company_info: companyInfo,
+      prospect_name: prospectName,
+      sender_name: senderName
+    }),
     credentials: 'include',
   });
   return safeJsonParse(res);
 };
 
-export const aiSendEmail = async (to: string, subject: string, body: string, prospect_id: number) => {
+// AI Send Email
+export const aiSendEmail = async (to: string, subject: string, body: string, prospectId?: number) => {
   const res = await fetch(`${API_URL}/ai/send-email`, {
     method: 'POST',
     headers: getAuthHeaders(),
-    body: JSON.stringify({ to, subject, body, prospect_id }),
-    credentials: 'include',
-  });
-  return safeJsonParse(res);
-};
-
-export const aiChat = async (message: string, prospect: any, company_info: string) => {
-  const res = await fetch(`${API_URL}/ai/chat`, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify({ message, prospect, company_info }),
+    body: JSON.stringify({ to, subject, body, prospect_id: prospectId }),
     credentials: 'include',
   });
   return safeJsonParse(res);
