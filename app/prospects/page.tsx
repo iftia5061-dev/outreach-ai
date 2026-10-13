@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getProspects, createProspect, deleteProspect, updateProspect, grantConsent, revokeConsent, createLead } from '@/lib/api';
+import { getProspects, createProspect, deleteProspect, updateProspect, grantConsent, revokeConsent, checkConsent, createLead } from '@/lib/api';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import Toast from '@/components/Toast';
@@ -57,7 +57,7 @@ export default function ProspectsPage() {
     name: '', position: '', company: '', yacht: '',
     email: '', phone: '', whatsapp: '', linkedin: '',
     country: '', status: 'New', interest: 'Medium',
-    emailConsent: false,
+    emailConsent: false, whatsappConsent: false,
   });
 
   const handleDelete = async (id: number) => {
@@ -157,7 +157,7 @@ export default function ProspectsPage() {
               { key: 'yacht', label: 'Industry / Notes', placeholder: 'Industry or notes' },
               { key: 'email', label: 'Email', placeholder: 'email@example.com' },
               { key: 'phone', label: 'Phone', placeholder: '+1 234 567 8900' },
-              { key: 'whatsapp', label: 'WhatsApp', placeholder: '+39 123 456 7890' },
+              { key: 'whatsapp', label: 'WhatsApp', placeholder: '+8801XXXXXXXXX (include country code)' },
               { key: 'country', label: 'Country', placeholder: 'Italy' },
             ].map((field) => (
               <div key={field.key}>
@@ -180,6 +180,15 @@ export default function ProspectsPage() {
               />
               <span className="text-sm text-gray-400">Email consent granted</span>
             </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={newProspect.whatsappConsent}
+                onChange={(e) => setNewProspect({...newProspect, whatsappConsent: e.target.checked})}
+                className="w-4 h-4"
+              />
+              <span className="text-sm text-gray-400">WhatsApp consent granted</span>
+            </div>
           </div>
           <div className="mt-4 flex gap-2">
             <Button variant="primary" onClick={async () => {
@@ -187,11 +196,16 @@ export default function ProspectsPage() {
               const result = await createProspect(newProspect);
               setProspects([...prospects, result]);
               setShowAddForm(false);
-              setNewProspect({ name: '', position: '', company: '', yacht: '', email: '', phone: '', whatsapp: '', linkedin: '', country: '', status: 'New', interest: 'Medium', emailConsent: false });
+              setNewProspect({ name: '', position: '', company: '', yacht: '', email: '', phone: '', whatsapp: '', linkedin: '', country: '', status: 'New', interest: 'Medium', emailConsent: false, whatsappConsent: false });
 
               // Grant email consent if checked
               if (newProspect.emailConsent && result.id) {
                 await grantConsent({ consent_type: 'email', prospect_id: result.id, source: 'manual' });
+              }
+
+              // Grant WhatsApp consent if checked
+              if (newProspect.whatsappConsent && result.id) {
+                await grantConsent({ consent_type: 'whatsapp', prospect_id: result.id, source: 'manual' });
               }
 
               setToast({ message: 'Prospect added!', type: 'success' });
@@ -212,6 +226,7 @@ export default function ProspectsPage() {
               { key: 'company', label: 'Company' },
               { key: 'email', label: 'Email' },
               { key: 'phone', label: 'Phone' },
+              { key: 'whatsapp', label: 'WhatsApp' },
               { key: 'country', label: 'Country' },
               { key: 'status', label: 'Status', select: true, options: ['New', 'Contacted', 'Responded', 'Interested', 'Qualified', 'Meeting Scheduled', 'Follow-up Required', 'Not Interested'] },
               { key: 'interest', label: 'Interest', select: true, options: ['Low', 'Medium', 'High', 'Very High'] },
@@ -248,12 +263,47 @@ export default function ProspectsPage() {
                 )}
               </div>
             ))}
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={editingProspect.emailConsent}
+                onChange={(e) => setEditingProspect({...editingProspect, emailConsent: e.target.checked})}
+                className="w-4 h-4"
+              />
+              <span className="text-sm text-gray-400">Email consent granted</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={editingProspect.whatsappConsent}
+                onChange={(e) => setEditingProspect({...editingProspect, whatsappConsent: e.target.checked})}
+                className="w-4 h-4"
+              />
+              <span className="text-sm text-gray-400">WhatsApp consent granted</span>
+            </div>
           </div>
           <div className="mt-4 flex gap-2">
             <Button variant="primary" onClick={async () => {
               try {
                 await updateProspect(editingProspect.id, editingProspect);
                 setProspects(prospects.map(p => p.id === editingProspect.id ? editingProspect : p));
+
+                // Handle email consent
+                const emailConsentCheck = await checkConsent('email', editingProspect.id);
+                if (editingProspect.emailConsent && !emailConsentCheck.has_consent) {
+                  await grantConsent({ consent_type: 'email', prospect_id: editingProspect.id, source: 'manual' });
+                } else if (!editingProspect.emailConsent && emailConsentCheck.has_consent) {
+                  await revokeConsent({ consent_type: 'email', prospect_id: editingProspect.id });
+                }
+
+                // Handle WhatsApp consent
+                const whatsappConsentCheck = await checkConsent('whatsapp', editingProspect.id);
+                if (editingProspect.whatsappConsent && !whatsappConsentCheck.has_consent) {
+                  await grantConsent({ consent_type: 'whatsapp', prospect_id: editingProspect.id, source: 'manual' });
+                } else if (!editingProspect.whatsappConsent && whatsappConsentCheck.has_consent) {
+                  await revokeConsent({ consent_type: 'whatsapp', prospect_id: editingProspect.id });
+                }
+
                 setShowEditForm(false);
                 setEditingProspect(null);
                 setToast({ message: 'Prospect updated!', type: 'success' });
@@ -392,8 +442,16 @@ export default function ProspectsPage() {
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <button
-                        onClick={() => {
+                        onClick={async () => {
                           setEditingProspect(p);
+                          // Load consent states
+                          const emailConsentCheck = await checkConsent('email', p.id);
+                          const whatsappConsentCheck = await checkConsent('whatsapp', p.id);
+                          setEditingProspect({
+                            ...p,
+                            emailConsent: emailConsentCheck.has_consent,
+                            whatsappConsent: whatsappConsentCheck.has_consent,
+                          });
                           setShowEditForm(true);
                         }}
                         className="text-xs text-blue-400 hover:text-blue-300"

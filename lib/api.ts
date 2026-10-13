@@ -403,3 +403,12 @@ export const getAnalytics = async () => {
   });
   return safeJsonParse(res);
 };
+
+// WhatsApp
+export const getWhatsAppMessages = async (prospectId: number) => {
+  const res = await fetch(`${API_URL}/whatsapp/messages?prospect_id=${prospectId}`, {
+    headers: getAuthHeaders(),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
