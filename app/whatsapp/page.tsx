@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getProspects, getWhatsAppMessages } from '@/lib/api';
+import { getProspects, getWhatsAppMessages, sendWhatsAppMessage } from '@/lib/api';
 import Button from '@/components/Button';
 import Toast from '@/components/Toast';
 
@@ -66,20 +66,12 @@ export default function WhatsAppPage() {
 
     setSending(true);
     try {
-      const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/whatsapp/send`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${typeof window !== 'undefined' ? localStorage.getItem('token') : null}`,
-        },
-        body: JSON.stringify({
-          message: message,
-          prospect_id: selectedProspect.id,
-        }),
-        credentials: 'include',
+      const to = selectedProspect.whatsapp?.replace(/\D/g, '');
+      const result = await sendWhatsAppMessage({
+        to,
+        message: message,
+        prospect_id: selectedProspect.id,
       });
-
-      const result = await data.json();
 
       if (result.error) {
         if (result.error.includes('Consent')) {
@@ -94,7 +86,7 @@ export default function WhatsAppPage() {
       } else {
         setToast({ message: 'Message sent successfully!', type: 'success' });
         setMessage('');
-        
+
         // Reload messages
         const messagesData = await getWhatsAppMessages(selectedProspect.id);
         if (!messagesData.error) {
@@ -102,9 +94,9 @@ export default function WhatsAppPage() {
         }
 
         if (result.isTemplateRequired) {
-          setToast({ 
-            message: 'Template message was sent (outside 24-hour window)', 
-            type: 'info' 
+          setToast({
+            message: 'Template message was sent (outside 24-hour window)',
+            type: 'info'
           });
         }
       }

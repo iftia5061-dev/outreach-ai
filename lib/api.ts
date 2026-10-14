@@ -405,6 +405,16 @@ export const getAnalytics = async () => {
 };
 
 // WhatsApp
+export const sendWhatsAppMessage = async (data: any) => {
+  const res = await fetch(`${API_URL}/whatsapp/send`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
 export const getWhatsAppMessages = async (prospectId: number) => {
   const res = await fetch(`${API_URL}/whatsapp/messages?prospect_id=${prospectId}`, {
     headers: getAuthHeaders(),
