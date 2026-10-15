@@ -404,6 +404,23 @@ export const getAnalytics = async () => {
   return safeJsonParse(res);
 };
 
+// Conversations
+export const getConversations = async () => {
+  const res = await fetch(`${API_URL}/conversations`, {
+    headers: getAuthHeaders(),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
+export const getConversationById = async (prospectId: number) => {
+  const res = await fetch(`${API_URL}/conversations/${prospectId}`, {
+    headers: getAuthHeaders(),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
 // WhatsApp
 export const sendWhatsAppMessage = async (data: any) => {
   const res = await fetch(`${API_URL}/whatsapp/send`, {
