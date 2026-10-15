@@ -439,3 +439,43 @@ export const getWhatsAppMessages = async (prospectId: number) => {
   });
   return safeJsonParse(res);
 };
+
+// LinkedIn
+export const generateLinkedInDraft = async (data: any) => {
+  const res = await fetch(`${API_URL}/linkedin/draft`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
+export const getLinkedInMessages = async (prospectId?: number) => {
+  const url = prospectId
+    ? `${API_URL}/linkedin/messages?prospect_id=${prospectId}`
+    : `${API_URL}/linkedin/messages`;
+  const res = await fetch(url, {
+    headers: getAuthHeaders(),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
+export const markLinkedInAsSent = async (id: number) => {
+  const res = await fetch(`${API_URL}/linkedin/messages/${id}/sent`, {
+    method: 'PATCH',
+    headers: getAuthHeaders(),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
+export const markLinkedInAsReplied = async (id: number) => {
+  const res = await fetch(`${API_URL}/linkedin/messages/${id}/replied`, {
+    method: 'PATCH',
+    headers: getAuthHeaders(),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};

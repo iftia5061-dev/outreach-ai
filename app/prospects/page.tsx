@@ -16,6 +16,16 @@ export default function ProspectsPage() {
   const [interestFilter, setInterestFilter] = useState('All Interest');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editingProspect, setEditingProspect] = useState<any>(null);
+  const [newProspect, setNewProspect] = useState({
+    name: '', position: '', company: '', yacht: '',
+    email: '', phone: '', whatsapp: '', linkedin: '',
+    country: '', status: 'New', interest: 'Medium',
+    emailConsent: false, whatsappConsent: false, linkedinConsent: false,
+  });
 
   useEffect(() => {
     const fetchProspects = async () => {
@@ -48,17 +58,6 @@ export default function ProspectsPage() {
     const matchesInterest = interestFilter === 'All Interest' || p.interest === interestFilter;
     return matchesSearch && matchesStatus && matchesInterest;
   }) : [];
-
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [showEditForm, setShowEditForm] = useState(false);
-  const [editingProspect, setEditingProspect] = useState<any>(null);
-  const [newProspect, setNewProspect] = useState({
-    name: '', position: '', company: '', yacht: '',
-    email: '', phone: '', whatsapp: '', linkedin: '',
-    country: '', status: 'New', interest: 'Medium',
-    emailConsent: false, whatsappConsent: false,
-  });
 
   const handleDelete = async (id: number) => {
     await deleteProspect(id);
@@ -189,6 +188,15 @@ export default function ProspectsPage() {
               />
               <span className="text-sm text-gray-400">WhatsApp consent granted</span>
             </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={newProspect.linkedinConsent}
+                onChange={(e) => setNewProspect({...newProspect, linkedinConsent: e.target.checked})}
+                className="w-4 h-4"
+              />
+              <span className="text-sm text-gray-400">LinkedIn consent granted</span>
+            </div>
           </div>
           <div className="mt-4 flex gap-2">
             <Button variant="primary" onClick={async () => {
@@ -196,7 +204,7 @@ export default function ProspectsPage() {
               const result = await createProspect(newProspect);
               setProspects([...prospects, result]);
               setShowAddForm(false);
-              setNewProspect({ name: '', position: '', company: '', yacht: '', email: '', phone: '', whatsapp: '', linkedin: '', country: '', status: 'New', interest: 'Medium', emailConsent: false, whatsappConsent: false });
+              setNewProspect({ name: '', position: '', company: '', yacht: '', email: '', phone: '', whatsapp: '', linkedin: '', country: '', status: 'New', interest: 'Medium', emailConsent: false, whatsappConsent: false, linkedinConsent: false });
 
               // Grant email consent if checked
               if (newProspect.emailConsent && result.id) {
@@ -206,6 +214,11 @@ export default function ProspectsPage() {
               // Grant WhatsApp consent if checked
               if (newProspect.whatsappConsent && result.id) {
                 await grantConsent({ consent_type: 'whatsapp', prospect_id: result.id, source: 'manual' });
+              }
+
+              // Grant LinkedIn consent if checked
+              if (newProspect.linkedinConsent && result.id) {
+                await grantConsent({ consent_type: 'linkedin', prospect_id: result.id, source: 'manual' });
               }
 
               setToast({ message: 'Prospect added!', type: 'success' });
@@ -281,6 +294,15 @@ export default function ProspectsPage() {
               />
               <span className="text-sm text-gray-400">WhatsApp consent granted</span>
             </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={editingProspect.linkedinConsent}
+                onChange={(e) => setEditingProspect({...editingProspect, linkedinConsent: e.target.checked})}
+                className="w-4 h-4"
+              />
+              <span className="text-sm text-gray-400">LinkedIn consent granted</span>
+            </div>
           </div>
           <div className="mt-4 flex gap-2">
             <Button variant="primary" onClick={async () => {
@@ -302,6 +324,14 @@ export default function ProspectsPage() {
                   await grantConsent({ consent_type: 'whatsapp', prospect_id: editingProspect.id, source: 'manual' });
                 } else if (!editingProspect.whatsappConsent && whatsappConsentCheck.has_consent) {
                   await revokeConsent({ consent_type: 'whatsapp', prospect_id: editingProspect.id });
+                }
+
+                // Handle LinkedIn consent
+                const linkedinConsentCheck = await checkConsent('linkedin', editingProspect.id);
+                if (editingProspect.linkedinConsent && !linkedinConsentCheck.has_consent) {
+                  await grantConsent({ consent_type: 'linkedin', prospect_id: editingProspect.id, source: 'manual' });
+                } else if (!editingProspect.linkedinConsent && linkedinConsentCheck.has_consent) {
+                  await revokeConsent({ consent_type: 'linkedin', prospect_id: editingProspect.id });
                 }
 
                 setShowEditForm(false);
@@ -447,10 +477,12 @@ export default function ProspectsPage() {
                           // Load consent states
                           const emailConsentCheck = await checkConsent('email', p.id);
                           const whatsappConsentCheck = await checkConsent('whatsapp', p.id);
+                          const linkedinConsentCheck = await checkConsent('linkedin', p.id);
                           setEditingProspect({
                             ...p,
                             emailConsent: emailConsentCheck.has_consent,
                             whatsappConsent: whatsappConsentCheck.has_consent,
+                            linkedinConsent: linkedinConsentCheck.has_consent,
                           });
                           setShowEditForm(true);
                         }}
