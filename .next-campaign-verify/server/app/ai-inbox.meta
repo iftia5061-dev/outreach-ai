@@ -1,0 +1,34 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/ai-inbox/layout,_N_T_/ai-inbox/page,_N_T_/ai-inbox"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/ai-inbox/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 96,
+        "slots": {
+          "children": {
+            "hints": 160,
+            "slots": null
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/9fafbc6c36b0706c2742b1ff6fb0168c149704667c2ed6b2ccaf461c2f1223b7/$/ai-inbox",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/ai-inbox/page"
+    },
+    "isFallback": false
+  }
+}

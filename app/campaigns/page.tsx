@@ -17,7 +17,9 @@ export default function CampaignsPage() {
     name: '',
     audience: '',
     channel: 'Email',
+    subject: '',
     message: '',
+    scheduledAt: '',
   });
 
   useEffect(() => {
@@ -61,13 +63,18 @@ export default function CampaignsPage() {
       setToast({ message: 'Message template is required', type: 'error' });
       return;
     }
+    if (!newCampaign.subject.trim() || !newCampaign.scheduledAt) {
+      setToast({ message: 'Email subject and future scheduled time are required', type: 'error' });
+      return;
+    }
 
     const campaign = await createCampaign({
       name: newCampaign.name,
       audience: newCampaign.audience,
       channel: newCampaign.channel,
-      status: 'Active',
+      subject: newCampaign.subject,
       message: newCampaign.message,
+      scheduled_at: new Date(newCampaign.scheduledAt).toISOString(),
     });
 
     if (campaign.error) {
@@ -75,8 +82,8 @@ export default function CampaignsPage() {
     } else {
       setCampaigns([...campaigns, campaign]);
       setShowCreateForm(false);
-      setNewCampaign({ name: '', audience: '', channel: 'Email', message: '' });
-      setToast({ message: 'Campaign created successfully!', type: 'success' });
+      setNewCampaign({ name: '', audience: '', channel: 'Email', subject: '', message: '', scheduledAt: '' });
+      setToast({ message: 'Email campaign scheduled. It will only send to prospects with recorded email consent.', type: 'success' });
     }
   };
 
@@ -240,20 +247,13 @@ export default function CampaignsPage() {
                 className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-600 text-white"
               >
                 <option>Email</option>
-                <option>WhatsApp</option>
-                <option>LinkedIn</option>
+                <option disabled>WhatsApp (manual campaign only)</option>
+                <option disabled>LinkedIn (assisted only)</option>
               </select>
             </div>
-            <div>
-              <label className="text-xs text-gray-400 mb-1 block">Follow-up Sequence</label>
-              <select className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-600 text-white">
-                <option>Single message</option>
-                <option>2-message sequence</option>
-                <option>3-message sequence</option>
-                <option>Custom sequence</option>
-              </select>
-            </div>
+            <div><label className="text-xs text-gray-400 mb-1 block">Schedule (your local time)</label><input type="datetime-local" value={newCampaign.scheduledAt} onChange={(e) => setNewCampaign({...newCampaign, scheduledAt: e.target.value})} className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-600 text-white" /></div>
           </div>
+          <div className="mt-4"><label className="text-xs text-gray-400 mb-1 block">Email subject</label><input value={newCampaign.subject} onChange={(e) => setNewCampaign({...newCampaign, subject: e.target.value})} placeholder="A short, relevant subject" className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-600 text-white placeholder-gray-500" /></div>
           <div className="mt-4">
             <label className="text-xs text-gray-400 mb-1 block">Message Template</label>
             <textarea 
@@ -269,7 +269,7 @@ export default function CampaignsPage() {
               onClick={handleCreateCampaign}
               variant="primary"
             >
-              Start Campaign
+              Schedule Email Campaign
             </Button>
             <Button variant="outline">Save as Draft</Button>
           </div>

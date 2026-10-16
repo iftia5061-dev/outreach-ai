@@ -1,0 +1,34 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/whatsapp/layout,_N_T_/whatsapp/page,_N_T_/whatsapp"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/whatsapp/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 96,
+        "slots": {
+          "children": {
+            "hints": 160,
+            "slots": null
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/fc382fc211c3b80009c43a6f3b1c6e2484a46836b05078a76805c8559931c6c1/$/whatsapp",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/whatsapp/page"
+    },
+    "isFallback": false
+  }
+}

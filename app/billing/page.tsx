@@ -144,6 +144,10 @@ export default function BillingPage() {
     router.push('/pricing');
   };
 
+  const isActiveTrial = subscription?.status === 'trialing'
+    && new Date(subscription.current_period_end) > new Date();
+  const isExpiredTrial = subscription?.status === 'trialing' && !isActiveTrial;
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -157,7 +161,7 @@ export default function BillingPage() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Billing & Subscription</h1>
 
-        {!subscription ? (
+        {!subscription || isExpiredTrial ? (
           <div className="bg-white rounded-lg shadow p-8 text-center">
             <div className="mb-6">
               <svg
@@ -173,16 +177,18 @@ export default function BillingPage() {
                   d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
                 />
               </svg>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">No Active Subscription</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">{isExpiredTrial ? 'Your free trial has ended' : 'No Active Subscription'}</h2>
               <p className="text-gray-600 mb-6">
-                Subscribe to a plan to unlock all features and start scaling your outreach.
+                {isExpiredTrial
+                  ? 'Choose a paid plan to restore access to OutreachAI.'
+                  : 'Choose a plan to start your one-time 30-day free trial.'}
               </p>
             </div>
             <button
               onClick={handleUpgrade}
               className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
             >
-              View Plans
+              {isExpiredTrial ? 'Choose a Paid Plan' : 'Choose a Plan'}
             </button>
           </div>
         ) : (
@@ -192,13 +198,13 @@ export default function BillingPage() {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">{plan?.name}</h2>
-                  <p className="text-gray-600 capitalize">{subscription.billing_cycle} billing</p>
+                  <p className="text-gray-600 capitalize">{isActiveTrial ? '30-day free trial' : `${subscription.billing_cycle} billing`}</p>
                 </div>
                 <div className="text-right">
                   <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                    subscription.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    subscription.status === 'active' || isActiveTrial ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                   }`}>
-                    {subscription.status}
+                    {isActiveTrial ? 'trial active' : subscription.status}
                   </span>
                 </div>
               </div>
@@ -220,7 +226,8 @@ export default function BillingPage() {
                 </div>
 
                 <div className="text-sm text-gray-600 mb-4">
-                  <p>Current period: {new Date(subscription.current_period_start).toLocaleDateString()} - {new Date(subscription.current_period_end).toLocaleDateString()}</p>
+                  <p>{isActiveTrial ? 'Trial ends' : 'Current period'}: {new Date(subscription.current_period_end).toLocaleDateString()}</p>
+                  {isActiveTrial && <p className="text-blue-700 mt-2">No payment method is required during your trial. Select a paid plan before this date to continue uninterrupted.</p>}
                   {subscription.cancel_at_period_end && (
                     <p className="text-red-600 mt-2">⚠️ Subscription will be cancelled on {new Date(subscription.current_period_end).toLocaleDateString()}</p>
                   )}
@@ -228,7 +235,9 @@ export default function BillingPage() {
               </div>
 
               <div className="flex gap-4 mt-6">
-                {subscription.status === 'active' && !subscription.cancel_at_period_end ? (
+                {isActiveTrial ? (
+                  <button onClick={handleUpgrade} className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">Choose a Paid Plan</button>
+                ) : subscription.status === 'active' && !subscription.cancel_at_period_end ? (
                   <>
                     <button
                       onClick={handleManageBilling}

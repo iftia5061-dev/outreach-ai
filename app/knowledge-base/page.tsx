@@ -1,28 +1,15 @@
 'use client';
 
-export default function KnowledgeBasePage() {
-  return (
-    <div className="min-h-screen bg-gray-950 p-6">
-      <button
-        onClick={() => window.history.back()}
-        className="flex items-center gap-2 text-sm text-gray-400 hover:text-white mb-4"
-      >
-        ← Back
-      </button>
-      <h2 className="text-base font-semibold text-white mb-6">Knowledge Base</h2>
+import { FormEvent, useEffect, useState } from 'react';
+import { createKnowledgeDocument, deleteKnowledgeDocument, getKnowledgeDocuments, updateKnowledgeDocument } from '@/lib/api';
 
-      {/* Coming Soon Card */}
-      <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 text-center">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-700 rounded-full mb-4">
-          <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 20 20">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12 a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <h3 className="text-lg font-semibold text-white mb-2">Coming Soon</h3>
-        <p className="text-sm text-gray-400 max-w-md mx-auto">
-          Knowledge base management is under development. This will allow uploading documents and training AI with company-specific information.
-        </p>
-      </div>
-    </div>
-  );
+type Document = { id: number; title: string; content: string; updated_at: string };
+export default function KnowledgeBasePage() {
+  const [documents, setDocuments] = useState<Document[]>([]); const [title, setTitle] = useState(''); const [content, setContent] = useState(''); const [editing, setEditing] = useState<number | null>(null); const [message, setMessage] = useState(''); const [loading, setLoading] = useState(true);
+  const load = async () => { const data = await getKnowledgeDocuments(); if (data.error) setMessage(data.error); else setDocuments(data.documents || []); setLoading(false); };
+  useEffect(() => { load(); }, []);
+  const save = async (event: FormEvent) => { event.preventDefault(); setMessage(''); const data = editing ? await updateKnowledgeDocument(editing, { title, content }) : await createKnowledgeDocument({ title, content }); if (data.error) { setMessage(data.error); return; } setTitle(''); setContent(''); setEditing(null); setMessage('Saved. AI Assistant can now use this knowledge.'); load(); };
+  const edit = (document: Document) => { setEditing(document.id); setTitle(document.title); setContent(document.content); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const remove = async (id: number) => { if (!confirm('Delete this knowledge document?')) return; const data = await deleteKnowledgeDocument(id); if (data.error) setMessage(data.error); else { setMessage('Document deleted.'); load(); } };
+  return <main className="min-h-screen bg-gray-950 p-6 text-white"><div className="mx-auto max-w-5xl"><h1 className="text-2xl font-semibold">Knowledge Base</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-gray-400">Save approved company facts, services, pricing guidance, and policies. AI Assistant uses these documents when preparing answers and outreach.</p><form onSubmit={save} className="mt-8 rounded-xl border border-gray-700 bg-gray-800 p-5"><div className="flex items-center justify-between gap-4"><h2 className="font-medium">{editing ? 'Edit document' : 'Add company knowledge'}</h2>{editing && <button type="button" onClick={() => { setEditing(null); setTitle(''); setContent(''); }} className="text-sm text-gray-300">Cancel edit</button>}</div><input required maxLength={160} value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Example: Core services and ideal customers" className="mt-4 w-full rounded-lg border border-gray-600 bg-gray-900 px-3 py-2 text-sm outline-none focus:border-blue-400" /><textarea required maxLength={20000} value={content} onChange={(event) => setContent(event.target.value)} placeholder="Write the approved information that AI may use…" rows={9} className="mt-3 w-full rounded-lg border border-gray-600 bg-gray-900 px-3 py-2 text-sm outline-none focus:border-blue-400" /><div className="mt-3 flex items-center justify-between gap-4"><span className="text-xs text-gray-500">{content.length.toLocaleString()} / 20,000 characters</span><button className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium hover:bg-blue-500">{editing ? 'Save changes' : 'Save document'}</button></div></form>{message && <p className="mt-4 rounded-lg border border-blue-500/30 bg-blue-500/10 px-4 py-3 text-sm text-blue-100">{message}</p>}<section className="mt-8"><h2 className="font-medium">Saved documents</h2>{loading ? <p className="mt-4 text-sm text-gray-400">Loading…</p> : documents.length === 0 ? <div className="mt-4 rounded-xl border border-dashed border-gray-700 p-8 text-center text-sm text-gray-400">No knowledge saved yet.</div> : <div className="mt-4 space-y-3">{documents.map((document) => <article key={document.id} className="rounded-xl border border-gray-700 bg-gray-800 p-5"><div className="flex flex-wrap justify-between gap-3"><div><h3 className="font-medium">{document.title}</h3><p className="mt-1 text-xs text-gray-500">Updated {new Date(document.updated_at).toLocaleString()}</p></div><div className="flex gap-3 text-sm"><button onClick={() => edit(document)} className="text-blue-300 hover:text-blue-200">Edit</button><button onClick={() => remove(document.id)} className="text-rose-300 hover:text-rose-200">Delete</button></div></div><p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-gray-300">{document.content}</p></article>)}</div>}</section></div></main>;
 }

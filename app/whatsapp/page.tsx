@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getProspects, getWhatsAppMessages, sendWhatsAppMessage } from '@/lib/api';
+import { getProspects, getWhatsAppMessages, getWhatsAppStatus, sendWhatsAppMessage } from '@/lib/api';
 import Button from '@/components/Button';
 import Toast from '@/components/Toast';
 
@@ -16,11 +16,14 @@ export default function WhatsAppPage() {
   const [sending, setSending] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [isTemplateRequired, setIsTemplateRequired] = useState(false);
+  const [configured, setConfigured] = useState(false);
+  const [templateName, setTemplateName] = useState('');
 
   useEffect(() => {
     const fetchProspects = async () => {
       try {
-        const data = await getProspects();
+        const [data, status] = await Promise.all([getProspects(), getWhatsAppStatus()]);
+        if (!status.error) setConfigured(Boolean(status.configured));
         if (data.error) {
           console.error('API error:', data.error);
           setProspects([]);
@@ -68,9 +71,10 @@ export default function WhatsAppPage() {
     try {
       const to = selectedProspect.whatsapp?.replace(/\D/g, '');
       const result = await sendWhatsAppMessage({
-        to,
         message: message,
         prospect_id: selectedProspect.id,
+        template_name: templateName.trim() || undefined,
+        language_code: 'en_US',
       });
 
       if (result.error) {
@@ -132,6 +136,12 @@ export default function WhatsAppPage() {
       </button>
       <h2 className="text-base font-semibold text-white mb-6">WhatsApp</h2>
 
+      {!configured && (
+        <div className="mb-6 rounded-xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm text-amber-100">
+          WhatsApp is not configured. Add Meta Cloud API credentials and verify the webhook before sending messages. No message can be sent until this is complete.
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Panel: Prospect Selection & Message */}
         <div className="lg:col-span-1 space-y-4">
@@ -169,6 +179,13 @@ export default function WhatsAppPage() {
               <div className="text-xs text-gray-500 mt-1 text-right">
                 {message.length} / 4096 characters
               </div>
+              <label className="text-xs text-gray-400 mt-4 mb-2 block">Approved Meta template name (required outside the 24-hour reply window)</label>
+              <input
+                value={templateName}
+                onChange={(e) => setTemplateName(e.target.value)}
+                placeholder="e.g. approved_outreach_template"
+                className="w-full border border-gray-700 bg-gray-900 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-600 text-white placeholder-gray-500"
+              />
               {isTemplateRequired && (
                 <div className="text-xs text-yellow-400 mt-2">
                   ⚠️ Template message will be sent (outside 24-hour window)
@@ -176,7 +193,7 @@ export default function WhatsAppPage() {
               )}
               <Button
                 onClick={handleSendMessage}
-                disabled={sending || !message.trim()}
+                disabled={sending || !message.trim() || !configured}
                 variant="primary"
                 className="mt-4 w-full"
               >

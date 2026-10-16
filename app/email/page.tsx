@@ -47,22 +47,8 @@ export default function EmailPage() {
       >
         ← Back
       </button>
-      <h2 className="text-base font-semibold text-white mb-6">Sent Emails</h2>
-
-      {/* Incoming Email Coming Soon */}
-      <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4 mb-6">
-        <div className="flex items-start gap-3">
-          <svg className="w-5 h-5 text-yellow-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 20 20">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
-          <div>
-            <p className="text-sm font-medium text-yellow-400">Incoming Emails - Coming Soon</p>
-            <p className="text-xs text-yellow-300/70 mt-1">
-              Replies from prospects will appear here soon.
-            </p>
-          </div>
-        </div>
-      </div>
+      <h2 className="text-base font-semibold text-white mb-2">Email History</h2>
+      <p className="text-sm text-gray-400 mb-6">Sent outreach and received replies appear here after your email provider webhook is configured.</p>
 
       {error && (
         <div className="bg-red-900/30 border border-red-700 rounded-lg p-4 mb-6">
@@ -73,7 +59,7 @@ export default function EmailPage() {
       {/* Sent Emails Table */}
       {emails.length === 0 ? (
         <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 text-center">
-          <p className="text-sm text-gray-400">No emails sent yet</p>
+            <p className="text-sm text-gray-400">No email activity yet</p>
         </div>
       ) : (
         <div className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden">
@@ -82,6 +68,7 @@ export default function EmailPage() {
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Recipient</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Subject</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Direction</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
               </tr>
@@ -95,16 +82,17 @@ export default function EmailPage() {
                   <td className="px-4 py-3 text-sm text-gray-300 truncate max-w-xs">
                     {email.subject}
                   </td>
+                  <td className="px-4 py-3 text-sm capitalize text-gray-300">{email.direction || 'sent'}</td>
                   <td className="px-4 py-3 text-sm text-gray-400">
                     {new Date(email.sent_at).toLocaleDateString('en-US')}
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      email.status === 'sent'
+                        email.status === 'sent' || email.status === 'received'
                         ? 'bg-green-900/30 text-green-400 border border-green-700'
                         : 'bg-red-900/30 text-red-400 border border-red-700'
                     }`}>
-                      {email.status === 'sent' ? 'Sent' : 'Failed'}
+                      {email.status === 'received' ? 'Received' : email.status === 'sent' ? 'Sent' : 'Failed'}
                     </span>
                   </td>
                 </tr>

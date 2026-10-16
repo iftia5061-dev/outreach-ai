@@ -1,254 +1,78 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { googleLoginUser } from '@/lib/api';
 import { googleSignInGetToken } from '@/lib/firebase';
+
+function GoogleIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24">
+      <path fill="#4285F4" d="M21.35 12.23c0-.71-.06-1.4-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.52h3.14c1.84-1.7 2.91-4.2 2.91-7.29Z" />
+      <path fill="#34A853" d="M12 21.75c2.62 0 4.82-.87 6.43-2.36l-3.14-2.39c-.87.58-1.98.93-3.29.93-2.52 0-4.66-1.7-5.42-3.99H3.34v2.47A9.72 9.72 0 0 0 12 21.75Z" />
+      <path fill="#FBBC05" d="M6.58 13.94A5.86 5.86 0 0 1 6.28 12c0-.67.12-1.32.3-1.94V7.59H3.34A9.72 9.72 0 0 0 2.25 12c0 1.57.38 3.06 1.09 4.41l3.24-2.47Z" />
+      <path fill="#EA4335" d="M12 6.07c1.43 0 2.7.49 3.71 1.45l2.79-2.79C16.82 3.16 14.62 2.25 12 2.25a9.72 9.72 0 0 0-8.66 5.34l3.24 2.47C7.34 7.77 9.48 6.07 12 6.07Z" />
+    </svg>
+  );
+}
 
 function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<'free' | 'monthly' | 'yearly' | null>(null);
-  const [sessionExpired, setSessionExpired] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    if (searchParams.get('expired') === 'true') {
-      setSessionExpired(true);
-    }
+    if (searchParams.get('expired') === 'true') setError('Your session expired. Please sign in again.');
   }, [searchParams]);
 
   const handleGoogle = async () => {
     if (loading) return;
-    if (!selectedPlan) {
-      alert('Please select a plan to continue');
-      return;
-    }
+    setError('');
     setLoading(true);
     try {
       const idToken = await googleSignInGetToken();
-      const res = await googleLoginUser(idToken);
-      if (res.user) {
-        // Save selected plan in localStorage for post-login redirect
-        if (selectedPlan && selectedPlan !== 'free') {
-          localStorage.setItem('selectedPlan', selectedPlan);
-        }
-        router.push('/dashboard');
-        return;
+      const response = await googleLoginUser(idToken);
+      if (!response.user) throw new Error(response.message || 'Google sign-in failed');
+      router.replace('/pricing');
+    } catch (error: unknown) {
+      const code = typeof error === 'object' && error && 'code' in error ? String(error.code) : '';
+      if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {
+        setError(error instanceof Error ? error.message : 'Google sign-in failed. Please try again.');
       }
-      alert(res.message || 'Google login failed');
-    } catch (e: any) {
-      if (e?.code !== 'auth/popup-closed-by-user' && e?.code !== 'auth/cancelled-popup-request') {
-        alert(e?.message || 'Google login failed');
-      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  };
-
-  const cards = [
-    { icon: "✉️", title: "Email Outreach", desc: "AI sends personalized emails to prospects" },
-    { icon: "💬", title: "WhatsApp AI", desc: "Automated conversations that feel human" },
-    { icon: "📅", title: "Meeting Booking", desc: "Auto-schedules 15-min calls with interested leads" },
-    { icon: "📊", title: "Analytics", desc: "Track every prospect from contact to conversion" },
-  ];
-
-  const primaryBtnStyle = {
-    width: '100%',
-    padding: '12px',
-    borderRadius: '10px',
-    background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-    color: '#fff',
-    fontSize: '14px',
-    fontWeight: 600,
-    border: 'none',
-    boxShadow: '0 4px 20px rgba(37,99,235,0.4)',
-  };
-
-  const planCardStyle = {
-    background: 'rgba(255,255,255,0.04)',
-    border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '16px',
-    padding: '24px',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-  };
-
-  const selectedPlanStyle = {
-    background: 'rgba(37,99,235,0.15)',
-    border: '2px solid #3b82f6',
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #020818 0%, #0a1628 40%, #0d1f3c 70%, #091525 100%)',
-      position: 'relative',
-      overflow: 'hidden',
-      fontFamily: 'sans-serif',
-    }}>
-      <style>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(24px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes glow {
-          0%, 100% { box-shadow: 0 0 24px rgba(59,130,246,0.25); }
-          50% { box-shadow: 0 0 48px rgba(59,130,246,0.5), 0 0 80px rgba(37,99,235,0.2); }
-        }
-        .fade-in { animation: fadeInUp 0.7s ease forwards; }
-        .plan-card:hover { transform: translateY(-6px); }
-      `}</style>
-
-      {/* Glow orbs */}
-      <div style={{ position: 'absolute', top: '10%', left: '5%', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: '15%', right: '5%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
-
-      <div style={{ position: 'relative', zIndex: 10, maxWidth: '1100px', margin: '0 auto', padding: '40px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh', justifyContent: 'center', gap: '40px' }}>
-
-        {/* Header */}
-        <div className="fade-in" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '12px', fontWeight: 600, color: '#60a5fa', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: '12px' }}>
-            AI-Powered Outreach
+    <main className="relative isolate min-h-screen overflow-hidden bg-slate-950 px-5 py-10 text-white sm:px-8">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_10%,rgba(37,99,235,0.34),transparent_33%),radial-gradient(circle_at_85%_85%,rgba(8,145,178,0.25),transparent_31%)]" />
+      <div className="absolute left-1/2 top-1/2 -z-10 h-[38rem] w-[38rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-blue-400/10" />
+      <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-5xl items-center justify-center">
+        <section className="grid w-full overflow-hidden rounded-3xl border border-white/10 bg-white/[0.055] shadow-2xl shadow-blue-950/50 backdrop-blur-xl lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="border-b border-white/10 p-8 sm:p-12 lg:border-b-0 lg:border-r">
+            <div className="mb-12 flex items-center gap-3"><div className="grid h-10 w-10 place-items-center rounded-xl bg-blue-500 text-lg font-black shadow-lg shadow-blue-500/30">O</div><span className="text-xl font-semibold tracking-tight">OutreachAI</span></div>
+            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-blue-300">AI-powered outreach</p>
+            <h1 className="max-w-lg text-4xl font-semibold tracking-tight sm:text-5xl">Turn thoughtful outreach into real conversations.</h1>
+            <p className="mt-5 max-w-xl text-base leading-7 text-slate-300">Plan, personalise, and manage your prospect conversations in one workspace. Start with a 30-day trial after choosing your plan.</p>
+            <div className="mt-10 grid gap-3 text-sm text-slate-200 sm:grid-cols-2">{['AI-assisted email outreach', 'Consent-aware communication', 'Conversation and campaign tracking', 'Secure Stripe billing'].map((feature) => <div key={feature} className="flex items-center gap-2 rounded-xl border border-white/10 bg-slate-900/30 px-3 py-3"><span className="text-emerald-400">✓</span>{feature}</div>)}</div>
           </div>
-          <h1 style={{ fontSize: '52px', fontWeight: 700, color: '#ffffff', lineHeight: 1.1, marginBottom: '16px', letterSpacing: '-1px' }}>
-            OutreachAI
-          </h1>
-          <p style={{ fontSize: '18px', color: '#93c5fd', marginBottom: '32px' }}>
-            Choose your plan to get started
-          </p>
-          {sessionExpired && (
-            <div style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid rgba(239, 68, 68, 0.5)', borderRadius: '12px', padding: '12px 16px', marginBottom: '16px' }}>
-              <p style={{ fontSize: '14px', color: '#fca5a5' }}>Session expired, please log in again</p>
-            </div>
-          )}
-        </div>
-
-        {/* Feature Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', width: '100%', marginBottom: '32px' }}>
-          {cards.map((card, i) => (
-            <div key={i} className="fade-in" style={{
-              animationDelay: `${i * 0.12}s`,
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '16px',
-              padding: '24px 20px',
-              backdropFilter: 'blur(12px)',
-            }}>
-              <div style={{ fontSize: '26px', marginBottom: '10px' }}>{card.icon}</div>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0', marginBottom: '6px' }}>{card.title}</div>
-              <div style={{ fontSize: '12px', color: '#64748b', lineHeight: 1.5 }}>{card.desc}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Plan Selection */}
-        <div className="fade-in" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', width: '100%', marginBottom: '32px' }}>
-          {/* Free Plan */}
-          <div 
-            onClick={() => setSelectedPlan('free')}
-            style={{
-              ...planCardStyle,
-              ...(selectedPlan === 'free' ? selectedPlanStyle : {}),
-            }}
-            className="plan-card"
-          >
-            <div style={{ fontSize: '24px', marginBottom: '12px' }}>🆓</div>
-            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#fff', marginBottom: '8px' }}>Free</h3>
-            <div style={{ fontSize: '32px', fontWeight: 700, color: '#22c55e', marginBottom: '8px' }}>$0</div>
-            <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '16px' }}>Forever</div>
-            <ul style={{ fontSize: '13px', color: '#cbd5e1', listStyle: 'none', padding: 0, margin: 0 }}>
-              <li style={{ marginBottom: '8px' }}>✓ Up to 3 prospects</li>
-              <li style={{ marginBottom: '8px' }}>✓ Email outreach</li>
-              <li style={{ marginBottom: '8px' }}>✓ Basic analytics</li>
-            </ul>
+          <div className="flex flex-col justify-center p-8 sm:p-12">
+            <p className="text-sm font-medium text-blue-300">WELCOME BACK</p><h2 className="mt-2 text-3xl font-semibold tracking-tight">Continue to OutreachAI</h2><p className="mt-3 text-sm leading-6 text-slate-400">Use your Google account to sign in securely. You will choose your subscription plan next.</p>
+            {error && <div role="alert" className="mt-6 rounded-xl border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">{error}</div>}
+            <button type="button" onClick={handleGoogle} disabled={loading} className="mt-8 flex w-full items-center justify-center gap-3 rounded-xl bg-white px-5 py-3.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-60"><GoogleIcon />{loading ? 'Signing you in…' : 'Continue with Google'}</button>
+            <p className="mt-6 text-center text-xs leading-5 text-slate-500">By continuing, you agree to the Terms of Service and Privacy Policy.</p>
           </div>
-
-          {/* Monthly Plan */}
-          <div 
-            onClick={() => setSelectedPlan('monthly')}
-            style={{
-              ...planCardStyle,
-              ...(selectedPlan === 'monthly' ? selectedPlanStyle : {}),
-            }}
-            className="plan-card"
-          >
-            <div style={{ fontSize: '24px', marginBottom: '12px' }}>⭐</div>
-            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#fff', marginBottom: '8px' }}>Monthly</h3>
-            <div style={{ fontSize: '32px', fontWeight: 700, color: '#3b82f6', marginBottom: '8px' }}>$99</div>
-            <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '16px' }}>per month</div>
-            <ul style={{ fontSize: '13px', color: '#cbd5e1', listStyle: 'none', padding: 0, margin: 0 }}>
-              <li style={{ marginBottom: '8px' }}>✓ Unlimited prospects</li>
-              <li style={{ marginBottom: '8px' }}>✓ Email + WhatsApp</li>
-              <li style={{ marginBottom: '8px' }}>✓ AI assistant</li>
-              <li style={{ marginBottom: '8px' }}>✓ Meeting booking</li>
-            </ul>
-          </div>
-
-          {/* Yearly Plan */}
-          <div 
-            onClick={() => setSelectedPlan('yearly')}
-            style={{
-              ...planCardStyle,
-              ...(selectedPlan === 'yearly' ? selectedPlanStyle : {}),
-            }}
-            className="plan-card"
-          >
-            <div style={{ fontSize: '24px', marginBottom: '12px' }}>🏆</div>
-            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#fff', marginBottom: '8px' }}>Yearly</h3>
-            <div style={{ fontSize: '32px', fontWeight: 700, color: '#8b5cf6', marginBottom: '8px' }}>$890</div>
-            <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '8px' }}>per year (Save 25%)</div>
-            <ul style={{ fontSize: '13px', color: '#cbd5e1', listStyle: 'none', padding: 0, margin: 0 }}>
-              <li style={{ marginBottom: '8px' }}>✓ Unlimited prospects</li>
-              <li style={{ marginBottom: '8px' }}>✓ Email + WhatsApp + LinkedIn</li>
-              <li style={{ marginBottom: '8px' }}>✓ AI assistant</li>
-              <li style={{ marginBottom: '8px' }}>✓ Telephone AI</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Continue with Google */}
-        <div className="fade-in" style={{
-          background: 'rgba(255,255,255,0.05)',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: '24px',
-          padding: '36px',
-          width: '100%',
-          maxWidth: '420px',
-          backdropFilter: 'blur(20px)',
-          animation: 'glow 3s ease-in-out infinite',
-        }}>
-          <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#fff', marginBottom: '24px', textAlign: 'center' }}>
-            Get Started
-          </h2>
-
-          <button 
-            onClick={handleGoogle} 
-            disabled={loading || !selectedPlan}
-            style={{
-              ...primaryBtnStyle,
-              cursor: (loading || !selectedPlan) ? 'not-allowed' : 'pointer',
-              opacity: (loading || !selectedPlan) ? 0.6 : 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '10px',
-            }}
-          >
-            <span style={{ fontSize: '18px' }}>🇬</span> {loading ? 'Please wait...' : 'Continue with Google'}
-          </button>
-
-          <p style={{ textAlign: 'center', fontSize: '13px', color: '#475569', marginTop: '16px' }}>
-            By continuing, you agree to our Terms of Service and Privacy Policy
-          </p>
-        </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#020818' }}></div>}>
+    <Suspense fallback={<main className="min-h-screen bg-slate-950" />}>
       <LoginPageContent />
     </Suspense>
   );

@@ -120,8 +120,10 @@ export default function LinkedInPage() {
   };
 
   const handleMarkAsReplied = async (id: number) => {
+    const replyText = window.prompt('Paste the reply received on LinkedIn:');
+    if (!replyText?.trim()) return;
     try {
-      const data = await markLinkedInAsReplied(id);
+      const data = await markLinkedInAsReplied(id, replyText);
       if (data.error) {
         setToast({ message: data.error, type: 'error' });
       } else {
@@ -183,22 +185,21 @@ export default function LinkedInPage() {
           <div>
             <p className="text-sm text-blue-300 font-medium">Assisted mode</p>
             <p className="text-xs text-blue-400 mt-1">
-              Drafts are generated here and sent by you on LinkedIn. Direct sending is not available yet.
+              Drafts are generated here, then you copy them and send them yourself on LinkedIn. Sent and replied activity is recorded here after your confirmation.
             </p>
           </div>
         </div>
       </div>
 
-      {/* API Connection Card */}
       <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 mb-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-medium text-white">API connection</h3>
-            <p className="text-xs text-gray-400 mt-1">Not connected</p>
+            <h3 className="text-sm font-medium text-white">Manual LinkedIn workflow</h3>
+            <p className="text-xs text-gray-400 mt-1">No LinkedIn credentials are stored and no message is sent automatically.</p>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-            <span className="text-xs text-gray-400">Offline</span>
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span className="text-xs text-green-300">Ready</span>
           </div>
         </div>
       </div>
@@ -353,7 +354,9 @@ export default function LinkedInPage() {
                         {msg.status === 'drafted' && (
                           <div className="flex gap-2 mt-2">
                             <Button
-                              onClick={() => handleMarkAsSent(msg.id)}
+                              onClick={() => {
+                                if (window.confirm('Confirm that you copied and sent this message in LinkedIn.')) handleMarkAsSent(msg.id);
+                              }}
                               variant="primary"
                               className="text-xs"
                             >
@@ -368,7 +371,7 @@ export default function LinkedInPage() {
                               variant="secondary"
                               className="text-xs"
                             >
-                              Mark as replied
+                              Record reply
                             </Button>
                           </div>
                         )}

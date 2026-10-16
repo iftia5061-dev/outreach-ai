@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getProspects, getLeads, getMeetings } from '@/lib/api';
+import { getProspects, getLeads, getMeetings, getSubscriptionStatus } from '@/lib/api';
 import Toast from '@/components/Toast';
 import Button from '@/components/Button';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
@@ -19,16 +19,15 @@ export default function DashboardPage() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   useEffect(() => {
-    // Check if user selected a paid plan before login
-    const selectedPlan = localStorage.getItem('selectedPlan');
-    if (selectedPlan && selectedPlan !== 'free') {
-      localStorage.removeItem('selectedPlan');
-      router.push('/pricing');
-      return;
-    }
-
     const fetchStats = async () => {
       try {
+        const subscriptionData = await getSubscriptionStatus();
+        const subscription = subscriptionData.subscription;
+        const hasValidTrial = subscription?.status === 'trialing' && new Date(subscription.current_period_end) > new Date();
+        if (!subscription || (subscription.status !== 'active' && !hasValidTrial)) {
+          router.replace('/pricing');
+          return;
+        }
         const [prospects, leads, meetings] = await Promise.all([
           getProspects(),
           getLeads(),
@@ -56,7 +55,7 @@ export default function DashboardPage() {
       }
     };
     fetchStats();
-  }, []);
+  }, [router]);
 
   if (loading) {
     return (

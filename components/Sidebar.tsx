@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { logoutUser } from '@/lib/api';
 
 interface SidebarProps {
   className?: string;
@@ -13,15 +14,10 @@ export default function Sidebar({ className = '' }: SidebarProps) {
 
   const handleLogout = async () => {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
-        method: 'POST',
-        credentials: 'include',
-      });
+      await logoutUser();
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      // Clear cookie and redirect to login
-      document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
       router.push('/login');
     }
   };
@@ -57,7 +53,7 @@ export default function Sidebar({ className = '' }: SidebarProps) {
     <div className={`w-52 bg-gray-900 flex flex-col ${className}`}>
       <div className="p-4 border-b border-gray-700">
         <h1 className="text-base font-semibold text-white">OutreachAI</h1>
-        <p className="text-xs text-gray-400">Admin panel</p>
+        <p className="text-xs text-gray-400">Outreach workspace</p>
       </div>
       <nav className="flex flex-col py-2">
         {navItems.map((item) => {

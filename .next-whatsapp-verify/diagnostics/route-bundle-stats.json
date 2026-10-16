@@ -1,0 +1,406 @@
+[
+  {
+    "route": "/login",
+    "firstLoadUncompressedJsBytes": 583864,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\1vdc-c3h-le2_.js",
+      ".next-whatsapp-verify\\static\\chunks\\43v943ie_svqo.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/prospects",
+    "firstLoadUncompressedJsBytes": 489088,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\2eyrb1gtswkzz.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/dashboard",
+    "firstLoadUncompressedJsBytes": 485869,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\1-pmc812027h4.js",
+      ".next-whatsapp-verify\\static\\chunks\\12_nhwaq45j1g.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/settings",
+    "firstLoadUncompressedJsBytes": 483931,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\3x6b-d2hqdg3x.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/calendar",
+    "firstLoadUncompressedJsBytes": 483553,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\3h18g11bm3-kb.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/admin",
+    "firstLoadUncompressedJsBytes": 483506,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\0w8e-zqkftmhe.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/ai-inbox",
+    "firstLoadUncompressedJsBytes": 481585,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\0lwlj_qxbianx.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/linkedin",
+    "firstLoadUncompressedJsBytes": 480734,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\2zbwjpmjjc_oc.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/meetings",
+    "firstLoadUncompressedJsBytes": 480297,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\3-g3_lzqza0sb.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/conversations",
+    "firstLoadUncompressedJsBytes": 480129,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\3yhvr37e-a-bj.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/campaigns",
+    "firstLoadUncompressedJsBytes": 479797,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\2m7jovvhxyeqj.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/billing",
+    "firstLoadUncompressedJsBytes": 478992,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\394yjgsedo8f9.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/whatsapp",
+    "firstLoadUncompressedJsBytes": 478424,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\0ofro-vvre7el.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/analytics",
+    "firstLoadUncompressedJsBytes": 477946,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\0x2j5uxmxdjqs.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/leads",
+    "firstLoadUncompressedJsBytes": 476992,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\0avzqn8qj6apt.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/ai-settings",
+    "firstLoadUncompressedJsBytes": 476715,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\3gdyip8vehgc_.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/ai-assistant",
+    "firstLoadUncompressedJsBytes": 476098,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\1ep24j2g3u6o1.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/telephone-ai",
+    "firstLoadUncompressedJsBytes": 475128,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\23693q14_zv3h.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/pricing",
+    "firstLoadUncompressedJsBytes": 474650,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\3jr82sxbf2-3e.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/knowledge-base",
+    "firstLoadUncompressedJsBytes": 474316,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\3zst95eyt7ytj.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/email",
+    "firstLoadUncompressedJsBytes": 473925,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\2n0kuqqbupdif.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/payment-processing",
+    "firstLoadUncompressedJsBytes": 473914,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\0rzks8-ob1lgg.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/clients",
+    "firstLoadUncompressedJsBytes": 473783,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\2bb_c17q81kpf.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/consents",
+    "firstLoadUncompressedJsBytes": 473628,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\3dtvtmlgfjvux.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/support",
+    "firstLoadUncompressedJsBytes": 473232,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\1c9xlcn-gj4cl.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/",
+    "firstLoadUncompressedJsBytes": 462372,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/_not-found",
+    "firstLoadUncompressedJsBytes": 462372,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/privacy",
+    "firstLoadUncompressedJsBytes": 462372,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/terms",
+    "firstLoadUncompressedJsBytes": 462372,
+    "firstLoadChunkPaths": [
+      ".next-whatsapp-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-whatsapp-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-whatsapp-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-whatsapp-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-whatsapp-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-whatsapp-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-whatsapp-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  }
+]

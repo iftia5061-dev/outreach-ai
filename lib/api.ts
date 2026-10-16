@@ -386,12 +386,71 @@ export const createCheckoutSession = async (data: any) => {
   return safeJsonParse(res);
 };
 
+export const startTrial = async (planType: string) => {
+  const res = await fetch(`${API_URL}/subscriptions/trial`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ plan_type: planType }),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
 export const createBillingPortal = async () => {
   const res = await fetch(`${API_URL}/subscriptions/portal`, {
     method: 'POST',
     headers: getAuthHeaders(),
     credentials: 'include',
   });
+  return safeJsonParse(res);
+};
+
+export const getAdminOverview = async () => {
+  const res = await fetch(`${API_URL}/admin/overview`, {
+    headers: getAuthHeaders(),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+export const setUserSuspension = async (userId: number, suspended: boolean, reason?: string) => {
+  const res = await fetch(`${API_URL}/admin/users/${userId}/suspension`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ suspended, reason }), credentials: 'include' });
+  return safeJsonParse(res);
+};
+
+export const getKnowledgeDocuments = async () => {
+  const res = await fetch(`${API_URL}/knowledge`, { headers: getAuthHeaders(), credentials: 'include' });
+  return safeJsonParse(res);
+};
+export const createKnowledgeDocument = async (data: { title: string; content: string }) => {
+  const res = await fetch(`${API_URL}/knowledge`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data), credentials: 'include' });
+  return safeJsonParse(res);
+};
+export const updateKnowledgeDocument = async (id: number, data: { title: string; content: string }) => {
+  const res = await fetch(`${API_URL}/knowledge/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data), credentials: 'include' });
+  return safeJsonParse(res);
+};
+export const deleteKnowledgeDocument = async (id: number) => {
+  const res = await fetch(`${API_URL}/knowledge/${id}`, { method: 'DELETE', headers: getAuthHeaders(), credentials: 'include' });
+  return safeJsonParse(res);
+};
+export const getSupportTickets = async () => {
+  const res = await fetch(`${API_URL}/support/tickets`, { headers: getAuthHeaders(), credentials: 'include' });
+  return safeJsonParse(res);
+};
+export const createSupportTicket = async (data: { subject: string; message: string }) => {
+  const res = await fetch(`${API_URL}/support/tickets`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data), credentials: 'include' });
+  return safeJsonParse(res);
+};
+export const updateSupportTicketStatus = async (ticketId: number, status: string) => {
+  const res = await fetch(`${API_URL}/support/tickets/${ticketId}`, { method: 'PATCH', headers: getAuthHeaders(), body: JSON.stringify({ status }), credentials: 'include' });
+  return safeJsonParse(res);
+};
+export const getTelephoneCalls = async () => {
+  const res = await fetch(`${API_URL}/telephone`, { headers: getAuthHeaders(), credentials: 'include' });
+  return safeJsonParse(res);
+};
+export const createTelephoneCall = async (data: { prospect_id?: number; to: string; script: string }) => {
+  const res = await fetch(`${API_URL}/telephone/calls`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data), credentials: 'include' });
   return safeJsonParse(res);
 };
 
@@ -440,6 +499,14 @@ export const getWhatsAppMessages = async (prospectId: number) => {
   return safeJsonParse(res);
 };
 
+export const getWhatsAppStatus = async () => {
+  const res = await fetch(`${API_URL}/whatsapp/status`, {
+    headers: getAuthHeaders(),
+    credentials: 'include',
+  });
+  return safeJsonParse(res);
+};
+
 // LinkedIn
 export const generateLinkedInDraft = async (data: any) => {
   const res = await fetch(`${API_URL}/linkedin/draft`, {
@@ -471,10 +538,11 @@ export const markLinkedInAsSent = async (id: number) => {
   return safeJsonParse(res);
 };
 
-export const markLinkedInAsReplied = async (id: number) => {
+export const markLinkedInAsReplied = async (id: number, replyText: string) => {
   const res = await fetch(`${API_URL}/linkedin/messages/${id}/replied`, {
     method: 'PATCH',
     headers: getAuthHeaders(),
+    body: JSON.stringify({ reply_text: replyText }),
     credentials: 'include',
   });
   return safeJsonParse(res);

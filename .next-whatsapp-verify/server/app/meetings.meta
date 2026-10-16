@@ -1,0 +1,34 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/meetings/layout,_N_T_/meetings/page,_N_T_/meetings"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/meetings/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 96,
+        "slots": {
+          "children": {
+            "hints": 160,
+            "slots": null
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/1a315a89962420a54a91bc83727aeec7b0736066e316e33d395f037454f9db7c/$/meetings",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/meetings/page"
+    },
+    "isFallback": false
+  }
+}

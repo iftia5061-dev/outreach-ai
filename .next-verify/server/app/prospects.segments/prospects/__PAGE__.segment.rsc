@@ -1,0 +1,27 @@
+1:"$Sreact.fragment"
+2:I[47257,["/_next/static/chunks/3fntmmi971322.js"],"ClientPageRoot"]
+3:I[45097,["/_next/static/chunks/3fntmmi971322.js","/_next/static/chunks/1i2ad59_n1o6y.js"],"default"]
+6:I[97367,["/_next/static/chunks/3fntmmi971322.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+b:I[97367,["/_next/static/chunks/3fntmmi971322.js"],"ViewportBoundary"]
+c:I[97367,["/_next/static/chunks/3fntmmi971322.js"],"MetadataBoundary"]
+d:I[27201,["/_next/static/chunks/3fntmmi971322.js"],"IconMark"]
+f:I[39756,["/_next/static/chunks/3fntmmi971322.js"],"default"]
+10:I[37457,["/_next/static/chunks/3fntmmi971322.js"],"default"]
+13:I[22016,["/_next/static/chunks/3fntmmi971322.js","/_next/static/chunks/22i43cg4l4-dq.js"],""]
+:HL["/_next/static/chunks/1uv35_8qhofex.css","style"]
+a:X
+12:X
+12:C
+0:{"buildId":"lVoYpuObpru0j29NvZkX-","data":[{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"Component":"$3","serverProvidedParams":{"searchParams":{},"params":{},"promises":["$@4","$@5"]}}],[["$","script","script-0",{"src":"/_next/static/chunks/1i2ad59_n1o6y.js","async":true}]],["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],"isPartial":"$@9","staleTime":"$a","varyParams":null},{"rsc":["$","$1","h",{"children":[null,["$","$Lb",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$Lc",null,{"children":["$","$7",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"OutreachAI - AI-Powered Sales Outreach Platform"}],["$","meta","1",{"name":"description","content":"Scale your sales outreach with AI-powered email, WhatsApp, LinkedIn, and telephone automation. Manage prospects, campaigns, and meetings in one platform."}],["$","meta","2",{"name":"author","content":"OutreachAI"}],["$","meta","3",{"name":"keywords","content":"sales outreach,AI automation,email marketing,WhatsApp marketing,LinkedIn automation,CRM"}],["$","meta","4",{"name":"creator","content":"OutreachAI"}],["$","meta","5",{"name":"publisher","content":"OutreachAI"}],["$","meta","6",{"name":"robots","content":"index, follow"}],["$","meta","7",{"property":"og:title","content":"OutreachAI - AI-Powered Sales Outreach Platform"}],["$","meta","8",{"property":"og:description","content":"Scale your sales outreach with AI-powered automation"}],["$","meta","9",{"property":"og:url","content":"https://outreach-ai.vercel.app"}],["$","meta","10",{"property":"og:site_name","content":"OutreachAI"}],["$","meta","11",{"property":"og:locale","content":"en_US"}],["$","meta","12",{"property":"og:type","content":"website"}],["$","meta","13",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","14",{"name":"twitter:title","content":"OutreachAI - AI-Powered Sales Outreach Platform"}],["$","meta","15",{"name":"twitter:description","content":"Scale your sales outreach with AI-powered automation"}],["$","link","16",{"rel":"icon","href":"/favicon.ico?favicon.2vob68tjqpejf.ico","sizes":"256x256","type":"image/x-icon"}],["$","$Ld","17",{}]]}]}]}],null]}],"isPartial":"$@e","staleTime":"$a","varyParams":null},{"rsc":["$","$1","c",{"children":[null,["$","$Lf",null,{"parallelRouterKey":"children","template":["$","$L10",null,{}]}]]}],"isPartial":"$@11","staleTime":"$a","varyParams":"$12"},{"rsc":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/1uv35_8qhofex.css","precedence":"next"}],["$","script","script-0",{"src":"/_next/static/chunks/3fntmmi971322.js","async":true}]],["$","html",null,{"lang":"en","className":"h-full antialiased","children":["$","body",null,{"className":"min-h-full flex flex-col","children":["$","$Lf",null,{"parallelRouterKey":"children","template":["$","$L10",null,{}],"notFound":[["$","div",null,{"className":"min-h-screen bg-gray-50 flex items-center justify-center px-4","children":["$","div",null,{"className":"text-center","children":[["$","h1",null,{"className":"text-9xl font-bold text-gray-900 mb-4","children":"404"}],["$","p",null,{"className":"text-2xl text-gray-600 mb-8","children":"Page not found"}],["$","p",null,{"className":"text-gray-500 mb-8","children":"The page you're looking for doesn't exist or has been moved."}],["$","$L13",null,{"href":"/","className":"inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors","children":"Go to Dashboard"}]]}]}],[]]}]}]}]]}],"isPartial":"$@14","staleTime":"$a","varyParams":null}],"isUpgradeableISRFallback":false,"a":"$@15","rootVaryParams":null,"needsRuntimeRequest":"$@16"}
+4:{}
+5:"$0:data:0:rsc:props:children:0:props:serverProvidedParams:params"
+8:null
+a:300
+16:true
+a:C
+15:0
+e:"$undefined"
+11:"$undefined"
+14:"$undefined"
+9:"$undefined"

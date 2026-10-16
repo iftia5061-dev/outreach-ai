@@ -12,7 +12,7 @@ function PaymentProcessingContent() {
   useEffect(() => {
     const checkPaymentStatus = async () => {
       let attempts = 0;
-      const maxAttempts = 10;
+      const maxAttempts = 30;
       const interval = setInterval(async () => {
         attempts++;
         try {
@@ -65,7 +65,8 @@ function PaymentProcessingContent() {
           <>
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
             <h2 className="text-xl font-semibold text-white mb-2">Processing Payment</h2>
-            <p className="text-gray-400">{message}</p>
+              <p className="text-gray-400">{message}</p>
+              <p className="mt-3 text-xs text-gray-500">This can take up to one minute while Stripe securely confirms your payment.</p>
           </>
         )}
         
@@ -95,6 +96,12 @@ function PaymentProcessingContent() {
               className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
             >
               Return to Billing
+            </button>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-3 text-sm text-blue-300 hover:text-blue-200"
+            >
+              Check again
             </button>
           </>
         )}

@@ -1,50 +1,13 @@
-export default function SupportPage() {
-  return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Support</h1>
-        
-        <div className="bg-white rounded-lg shadow p-8 space-y-6">
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Get Help</h2>
-            <p className="text-gray-700 mb-4">
-              Our support team is here to help you with any questions or issues you may have.
-            </p>
-            <div className="space-y-2">
-              <p className="text-gray-700">
-                <strong>Email:</strong> support@outreachai.com
-              </p>
-              <p className="text-gray-700">
-                <strong>Response Time:</strong> Within 24 hours
-              </p>
-            </div>
-          </section>
+'use client';
 
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Frequently Asked Questions</h2>
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-semibold text-gray-900">How do I upgrade my plan?</h3>
-                <p className="text-gray-700">
-                  Go to the Billing page and click "Change Plan" to upgrade or downgrade your subscription.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Can I cancel anytime?</h3>
-                <p className="text-gray-700">
-                  Yes, you can cancel your subscription at any time. Your access will continue until the end of your billing period.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">What happens if I exceed my limits?</h3>
-                <p className="text-gray-700">
-                  You'll need to upgrade to a higher plan to add more prospects or clients. We'll notify you when you're approaching your limits.
-                </p>
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-    </div>
-  );
+import { FormEvent, useEffect, useState } from 'react';
+import { createSupportTicket, getSupportTickets } from '@/lib/api';
+
+type Ticket = { id: number; subject: string; message: string; status: string; created_at: string };
+export default function SupportPage() {
+  const [tickets, setTickets] = useState<Ticket[]>([]); const [subject, setSubject] = useState(''); const [message, setMessage] = useState(''); const [notice, setNotice] = useState(''); const [saving, setSaving] = useState(false);
+  const load = async () => { const data = await getSupportTickets(); if (data.error) setNotice(data.error); else setTickets(data.tickets || []); };
+  useEffect(() => { load(); }, []);
+  const submit = async (event: FormEvent) => { event.preventDefault(); setSaving(true); setNotice(''); const data = await createSupportTicket({ subject, message }); setSaving(false); if (data.error) { setNotice(data.error); return; } setSubject(''); setMessage(''); setNotice('Your support request was submitted.'); load(); };
+  return <main className="min-h-screen bg-slate-950 p-6 text-white sm:p-10"><div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[.9fr_1.1fr]"><section><p className="text-sm font-semibold uppercase tracking-[.2em] text-blue-300">Support</p><h1 className="mt-2 text-3xl font-bold">How can we help?</h1><p className="mt-4 text-sm leading-6 text-slate-300">Send a secure support request from your account. Your ticket is stored with your account and can be reviewed by the OutreachAI team.</p><form onSubmit={submit} className="mt-7 space-y-4 rounded-xl border border-white/10 bg-white/5 p-5"><input required maxLength={200} value={subject} onChange={(event) => setSubject(event.target.value)} placeholder="Subject" className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm"/><textarea required maxLength={5000} value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Describe the issue or question…" rows={7} className="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm"/><button disabled={saving} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium hover:bg-blue-500 disabled:opacity-60">{saving ? 'Submitting…' : 'Submit support ticket'}</button></form>{notice && <p className="mt-4 rounded-lg border border-blue-400/30 bg-blue-500/10 px-4 py-3 text-sm text-blue-100">{notice}</p>}</section><section className="rounded-xl border border-white/10 bg-white/5 p-5"><h2 className="font-semibold">Your support tickets</h2><div className="mt-4 space-y-3">{tickets.length === 0 ? <p className="text-sm text-slate-400">No tickets yet.</p> : tickets.map((ticket) => <article key={ticket.id} className="rounded-lg border border-white/10 bg-slate-900/40 p-4"><div className="flex justify-between gap-3"><h3 className="font-medium">{ticket.subject}</h3><span className="text-xs capitalize text-blue-200">{ticket.status.replace('_', ' ')}</span></div><p className="mt-2 whitespace-pre-wrap text-sm text-slate-300">{ticket.message}</p><p className="mt-3 text-xs text-slate-500">{new Date(ticket.created_at).toLocaleString()}</p></article>)}</div></section></div></main>;
 }

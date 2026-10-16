@@ -1,0 +1,406 @@
+[
+  {
+    "route": "/login",
+    "firstLoadUncompressedJsBytes": 583752,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\17r1g_0rvja50.js",
+      ".next-telephone-verify\\static\\chunks\\43v943ie_svqo.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/prospects",
+    "firstLoadUncompressedJsBytes": 488976,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\3yq1iyv784euu.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/dashboard",
+    "firstLoadUncompressedJsBytes": 485757,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\0gu1iau_pqyik.js",
+      ".next-telephone-verify\\static\\chunks\\12_nhwaq45j1g.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/settings",
+    "firstLoadUncompressedJsBytes": 483819,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\2y56-i51cyti9.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/calendar",
+    "firstLoadUncompressedJsBytes": 483441,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\14-5yg1k1612h.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/admin",
+    "firstLoadUncompressedJsBytes": 483394,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\257nlz-02uxot.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/ai-inbox",
+    "firstLoadUncompressedJsBytes": 481473,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\0mi9u39ognt-4.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/linkedin",
+    "firstLoadUncompressedJsBytes": 480622,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\2q5fwf2z4wzfy.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/meetings",
+    "firstLoadUncompressedJsBytes": 480185,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\10_6q6_24ndj8.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/conversations",
+    "firstLoadUncompressedJsBytes": 480017,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\2s7e3u9u-_yr1.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/campaigns",
+    "firstLoadUncompressedJsBytes": 479685,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\3hbi51lwxtxd_.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/billing",
+    "firstLoadUncompressedJsBytes": 478880,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\22thuazlwwger.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/analytics",
+    "firstLoadUncompressedJsBytes": 477834,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\2cdroou893_bv.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/whatsapp",
+    "firstLoadUncompressedJsBytes": 477446,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\3v_jx4tbc1qpn.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/leads",
+    "firstLoadUncompressedJsBytes": 476880,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\41vtr8q007pj5.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/ai-settings",
+    "firstLoadUncompressedJsBytes": 476603,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\3v6o8r6dnjo62.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/ai-assistant",
+    "firstLoadUncompressedJsBytes": 475986,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\43nzmyjp9wy6_.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/telephone-ai",
+    "firstLoadUncompressedJsBytes": 475023,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\1bdyc3w32iwn6.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/pricing",
+    "firstLoadUncompressedJsBytes": 474538,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\17u5lzt4gvm3m.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/knowledge-base",
+    "firstLoadUncompressedJsBytes": 474204,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\2lekua8tjy298.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/email",
+    "firstLoadUncompressedJsBytes": 473813,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\3o_4tsdzl4g3b.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/payment-processing",
+    "firstLoadUncompressedJsBytes": 473802,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\2bcle_6-szmj5.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/clients",
+    "firstLoadUncompressedJsBytes": 473671,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\1osg26twr119f.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/consents",
+    "firstLoadUncompressedJsBytes": 473516,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\3pfp70jqb0-a9.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/support",
+    "firstLoadUncompressedJsBytes": 473120,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\1kqx2gkvl-ws5.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/",
+    "firstLoadUncompressedJsBytes": 462372,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/_not-found",
+    "firstLoadUncompressedJsBytes": 462372,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/privacy",
+    "firstLoadUncompressedJsBytes": 462372,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  },
+  {
+    "route": "/terms",
+    "firstLoadUncompressedJsBytes": 462372,
+    "firstLoadChunkPaths": [
+      ".next-telephone-verify\\static\\chunks\\3fntmmi971322.js",
+      ".next-telephone-verify\\static\\chunks\\22i43cg4l4-dq.js",
+      ".next-telephone-verify\\static\\chunks\\310vm2bl3xxpt.js",
+      ".next-telephone-verify\\static\\chunks\\2mmpezlrfmbu5.js",
+      ".next-telephone-verify\\static\\chunks\\1rj7ns8rte9vc.js",
+      ".next-telephone-verify\\static\\chunks\\3un1mb5bx4x8k.js",
+      ".next-telephone-verify\\static\\chunks\\turbopack-29-tawvx8tojb.js"
+    ]
+  }
+]

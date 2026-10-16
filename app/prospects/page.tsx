@@ -24,7 +24,7 @@ export default function ProspectsPage() {
     name: '', position: '', company: '', yacht: '',
     email: '', phone: '', whatsapp: '', linkedin: '',
     country: '', status: 'New', interest: 'Medium',
-    emailConsent: false, whatsappConsent: false, linkedinConsent: false,
+    emailConsent: false, whatsappConsent: false, linkedinConsent: false, telephoneConsent: false,
   });
 
   useEffect(() => {
@@ -197,6 +197,15 @@ export default function ProspectsPage() {
               />
               <span className="text-sm text-gray-400">LinkedIn consent granted</span>
             </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={newProspect.telephoneConsent}
+                onChange={(e) => setNewProspect({...newProspect, telephoneConsent: e.target.checked})}
+                className="w-4 h-4"
+              />
+              <span className="text-sm text-gray-400">Telephone consent granted</span>
+            </div>
           </div>
           <div className="mt-4 flex gap-2">
             <Button variant="primary" onClick={async () => {
@@ -204,7 +213,7 @@ export default function ProspectsPage() {
               const result = await createProspect(newProspect);
               setProspects([...prospects, result]);
               setShowAddForm(false);
-              setNewProspect({ name: '', position: '', company: '', yacht: '', email: '', phone: '', whatsapp: '', linkedin: '', country: '', status: 'New', interest: 'Medium', emailConsent: false, whatsappConsent: false, linkedinConsent: false });
+              setNewProspect({ name: '', position: '', company: '', yacht: '', email: '', phone: '', whatsapp: '', linkedin: '', country: '', status: 'New', interest: 'Medium', emailConsent: false, whatsappConsent: false, linkedinConsent: false, telephoneConsent: false });
 
               // Grant email consent if checked
               if (newProspect.emailConsent && result.id) {
@@ -219,6 +228,10 @@ export default function ProspectsPage() {
               // Grant LinkedIn consent if checked
               if (newProspect.linkedinConsent && result.id) {
                 await grantConsent({ consent_type: 'linkedin', prospect_id: result.id, source: 'manual' });
+              }
+
+              if (newProspect.telephoneConsent && result.id) {
+                await grantConsent({ consent_type: 'telephone', prospect_id: result.id, source: 'manual' });
               }
 
               setToast({ message: 'Prospect added!', type: 'success' });
@@ -303,6 +316,15 @@ export default function ProspectsPage() {
               />
               <span className="text-sm text-gray-400">LinkedIn consent granted</span>
             </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={editingProspect.telephoneConsent}
+                onChange={(e) => setEditingProspect({...editingProspect, telephoneConsent: e.target.checked})}
+                className="w-4 h-4"
+              />
+              <span className="text-sm text-gray-400">Telephone consent granted</span>
+            </div>
           </div>
           <div className="mt-4 flex gap-2">
             <Button variant="primary" onClick={async () => {
@@ -332,6 +354,13 @@ export default function ProspectsPage() {
                   await grantConsent({ consent_type: 'linkedin', prospect_id: editingProspect.id, source: 'manual' });
                 } else if (!editingProspect.linkedinConsent && linkedinConsentCheck.has_consent) {
                   await revokeConsent({ consent_type: 'linkedin', prospect_id: editingProspect.id });
+                }
+
+                const telephoneConsentCheck = await checkConsent('telephone', editingProspect.id);
+                if (editingProspect.telephoneConsent && !telephoneConsentCheck.has_consent) {
+                  await grantConsent({ consent_type: 'telephone', prospect_id: editingProspect.id, source: 'manual' });
+                } else if (!editingProspect.telephoneConsent && telephoneConsentCheck.has_consent) {
+                  await revokeConsent({ consent_type: 'telephone', prospect_id: editingProspect.id });
                 }
 
                 setShowEditForm(false);
@@ -478,11 +507,13 @@ export default function ProspectsPage() {
                           const emailConsentCheck = await checkConsent('email', p.id);
                           const whatsappConsentCheck = await checkConsent('whatsapp', p.id);
                           const linkedinConsentCheck = await checkConsent('linkedin', p.id);
+                          const telephoneConsentCheck = await checkConsent('telephone', p.id);
                           setEditingProspect({
                             ...p,
                             emailConsent: emailConsentCheck.has_consent,
                             whatsappConsent: whatsappConsentCheck.has_consent,
                             linkedinConsent: linkedinConsentCheck.has_consent,
+                            telephoneConsent: telephoneConsentCheck.has_consent,
                           });
                           setShowEditForm(true);
                         }}

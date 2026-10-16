@@ -1,0 +1,34 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/telephone-ai/layout,_N_T_/telephone-ai/page,_N_T_/telephone-ai"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/telephone-ai/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 96,
+        "slots": {
+          "children": {
+            "hints": 160,
+            "slots": null
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/c613a4e0c7d7e9342ee2bc2761fb7697dffcb5030fe710b36a207fe5e5edbae9/$/telephone-ai",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/telephone-ai/page"
+    },
+    "isFallback": false
+  }
+}
