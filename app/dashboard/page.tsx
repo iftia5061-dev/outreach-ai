@@ -11,6 +11,7 @@ import LoadingSkeleton from '@/components/LoadingSkeleton';
 export default function DashboardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [subError, setSubError] = useState('');
   const [stats, setStats] = useState({
     prospects: 0,
     leads: 0,
@@ -23,11 +24,20 @@ export default function DashboardPage() {
       try {
         const subscriptionData = await getSubscriptionStatus();
         const subscription = subscriptionData.subscription;
-        const hasValidTrial = subscription?.status === 'trialing' && new Date(subscription.current_period_end) > new Date();
-        if (!subscription || (subscription.status !== 'active' && !hasValidTrial)) {
+        
+        // Check if subscription is valid
+        if (subscription) {
+          const hasValidTrial = subscription.status === 'trialing' && new Date(subscription.current_period_end) > new Date();
+          if (subscription.status !== 'active' && !hasValidTrial) {
+            router.replace('/pricing');
+            return;
+          }
+        } else {
+          // No subscription data at all
           router.replace('/pricing');
           return;
         }
+        
         const [prospects, leads, meetings] = await Promise.all([
           getProspects(),
           getLeads(),
@@ -45,17 +55,24 @@ export default function DashboardPage() {
         });
       } catch (error) {
         console.error('Failed to fetch stats:', error);
-        setStats({
-          prospects: 0,
-          leads: 0,
-          meetings: 0,
-        });
+        setSubError(error instanceof Error ? error.message : 'Failed to load dashboard');
       } finally {
         setLoading(false);
       }
     };
     fetchStats();
   }, [router]);
+
+  if (subError) {
+    return (
+      <div className="p-6">
+        <div className="bg-red-900/20 border border-red-700 rounded-xl p-4 text-center">
+          <p className="text-red-400">{subError}</p>
+          <button onClick={() => window.location.reload()} className="mt-4 text-blue-400 hover:underline">Retry</button>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

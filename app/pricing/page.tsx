@@ -17,8 +17,32 @@ export default function PricingPage() {
   const [subscription, setSubscription] = useState<any>(null);
   const [loading, setLoading] = useState<PlanKey | null>(null);
   const [message, setMessage] = useState('');
+  const [subLoading, setSubLoading] = useState(true);
+  const [subError, setSubError] = useState('');
 
-  useEffect(() => { getSubscriptionStatus().then((data) => setSubscription(data.subscription ?? null)); }, []);
+  useEffect(() => {
+    const checkSubscription = async () => {
+      try {
+        const data = await getSubscriptionStatus();
+        const subscription = data.subscription;
+        
+        if (subscription) {
+          const hasValidTrial = subscription.status === 'trialing' && new Date(subscription.current_period_end) > new Date();
+          if (subscription.status === 'active' || hasValidTrial) {
+            router.replace('/dashboard');
+            return;
+          }
+        }
+        
+        setSubscription(subscription ?? null);
+      } catch (error) {
+        setSubError(error instanceof Error ? error.message : 'Failed to check subscription');
+      } finally {
+        setSubLoading(false);
+      }
+    };
+    checkSubscription();
+  }, [router]);
 
   const selectPlan = async (plan: PlanKey) => {
     setLoading(plan); setMessage('');
@@ -43,6 +67,22 @@ export default function PricingPage() {
   };
 
   const trialActive = subscription?.status === 'trialing' && new Date(subscription.current_period_end) > new Date();
+
+  if (subLoading) {
+    return <main className="min-h-screen bg-slate-950 flex items-center justify-center text-white">
+      <p>Loading...</p>
+    </main>;
+  }
+
+  if (subError) {
+    return <main className="min-h-screen bg-slate-950 flex items-center justify-center text-white">
+      <div className="text-center">
+        <p className="text-rose-400">{subError}</p>
+        <button onClick={() => window.location.reload()} className="mt-4 text-blue-400 hover:underline">Retry</button>
+      </div>
+    </main>;
+  }
+
   return <main className="min-h-screen bg-slate-950 px-5 py-12 text-white sm:px-8">
     <div className="mx-auto max-w-6xl">
       <div className="text-center"><p className="text-sm font-semibold uppercase tracking-[.2em] text-blue-300">Simple, transparent billing</p><h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Choose the plan for your outreach</h1><p className="mx-auto mt-4 max-w-2xl text-slate-300">There is no permanent free plan. Every new account receives one 30-day card-free trial after selecting a plan.</p></div>

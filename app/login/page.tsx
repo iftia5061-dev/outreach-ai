@@ -34,7 +34,8 @@ function LoginPageContent() {
       const idToken = await googleSignInGetToken();
       const response = await googleLoginUser(idToken);
       if (!response.user) throw new Error(response.message || 'Google sign-in failed');
-      router.replace('/pricing');
+      const redirectUrl = response.redirectUrl || '/pricing';
+      router.replace(redirectUrl);
     } catch (error: unknown) {
       const code = typeof error === 'object' && error && 'code' in error ? String(error.code) : '';
       if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {
